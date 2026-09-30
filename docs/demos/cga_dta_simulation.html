@@ -1,280 +1,616 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Improved CGA-BFS DTA Simulation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --bg-color: #0d1117;
-            --text-color: #ecf0f1;
-            --cpu-color: #58a6ff;
-            --gpu-color: #ff7b72;
-            --kernel-bg: rgba(22, 27, 34, 0.85);
-            --accent: #2ea043;
-            --node-idle: #21262d;
-            --border-color: #30363d;
-        }
-        body { margin: 0; padding: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; background-image: radial-gradient(circle at 50% 0%, #1f2428 0%, #0d1117 70%); }
-        .sidebar { width: 400px; background-color: var(--kernel-bg); backdrop-filter: blur(10px); border-right: 1px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; z-index: 10; overflow-y: auto; }
-        .title { font-size: 26px; font-weight: 700; background: linear-gradient(90deg, #58a6ff, #2ea043); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
-        .subtitle { font-size: 13px; color: #8b949e; margin-bottom: 30px; letter-spacing: 0.5px;text-transform: uppercase;}
-        
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .stat-box { background-color: #161b22; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; transition: all 0.3s ease; }
-        .stat-box.full-width { grid-column: span 2; }
-        .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #8b949e; margin-bottom: 5px; }
-        .stat-value { font-size: 24px; font-weight: 700; }
-        
-        .feature-box { background-color: #0d1117; border: 1px dashed var(--border-color); border-radius: 6px; padding: 12px; margin-top: 10px; font-family: monospace; font-size: 12px; color: #a5d6ff;}
-        .decision-box { background-color: rgba(46, 160, 67, 0.1); border-left: 4px solid var(--accent); padding: 12px; font-size: 13px; margin-top: 10px; border-radius: 0 6px 6px 0; line-height: 1.4;}
-        .decision-box strong { color: var(--accent); }
+      :root {
+        --bg-color: #0d1117;
+        --text-color: #ecf0f1;
+        --cpu-color: #58a6ff;
+        --gpu-color: #ff7b72;
+        --kernel-bg: rgba(22, 27, 34, 0.85);
+        --accent: #2ea043;
+        --node-idle: #21262d;
+        --border-color: #30363d;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Outfit", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        background-image: radial-gradient(
+          circle at 50% 0%,
+          #1f2428 0%,
+          #0d1117 70%
+        );
+      }
+      .sidebar {
+        width: 400px;
+        background-color: var(--kernel-bg);
+        backdrop-filter: blur(10px);
+        border-right: 1px solid var(--border-color);
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+        overflow-y: auto;
+      }
+      .title {
+        font-size: 26px;
+        font-weight: 700;
+        background: linear-gradient(90deg, #58a6ff, #2ea043);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+      }
+      .subtitle {
+        font-size: 13px;
+        color: #8b949e;
+        margin-bottom: 30px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
 
-        .kernel-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-top: 10px; }
-        .platform-cpu { border-left: 4px solid var(--cpu-color); box-shadow: 0 0 15px rgba(88, 166, 255, 0.1); }
-        .platform-gpu { border-left: 4px solid var(--gpu-color); box-shadow: 0 0 15px rgba(255, 123, 114, 0.1); }
-        .kernel-badge.cpu { background-color: rgba(88, 166, 255, 0.2); border: 1px solid var(--cpu-color); color: var(--cpu-color); }
-        .kernel-badge.gpu { background-color: rgba(255, 123, 114, 0.2); border: 1px solid var(--gpu-color); color: var(--gpu-color); }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      .stat-box {
+        background-color: #161b22;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        transition: all 0.3s ease;
+      }
+      .stat-box.full-width {
+        grid-column: span 2;
+      }
+      .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #8b949e;
+        margin-bottom: 5px;
+      }
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+      }
 
-        .controls { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .btn-row { display: flex; gap: 10px; }
-        button { flex: 1; padding: 12px; background-color: var(--accent); color: white; border: none; border-radius: 6px; font-family: 'Outfit'; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        button:hover { background-color: #3fb950; transform: translateY(-1px); }
-        button:disabled { background-color: #21262d; color: #8b949e; cursor: not-allowed; transform: none; box-shadow: none; }
-        
-        .slider-cont { display: flex; flex-direction: column; gap: 5px; }
-        .slider-label { display: flex; justify-content: space-between; font-size: 12px; color: #8b949e; }
-        input[type=range] { width: 100%; cursor: pointer; }
+      .feature-box {
+        background-color: #0d1117;
+        border: 1px dashed var(--border-color);
+        border-radius: 6px;
+        padding: 12px;
+        margin-top: 10px;
+        font-family: monospace;
+        font-size: 12px;
+        color: #a5d6ff;
+      }
+      .decision-box {
+        background-color: rgba(46, 160, 67, 0.1);
+        border-left: 4px solid var(--accent);
+        padding: 12px;
+        font-size: 13px;
+        margin-top: 10px;
+        border-radius: 0 6px 6px 0;
+        line-height: 1.4;
+      }
+      .decision-box strong {
+        color: var(--accent);
+      }
 
-        .canvas-container { flex: 1; position: relative; }
-        svg { width: 100%; height: 100%; }
-        .link { stroke: #30363d; stroke-opacity: 0.6; stroke-width: 1.5px; transition: stroke 0.3s; }
-        .node { fill: var(--node-idle); stroke: #0d1117; stroke-width: 2px; transition: all 0.4s ease; }
-        .node.visited { fill: #484f58; r: 3; }
-        .node.frontier-cpu { fill: var(--cpu-color); filter: drop-shadow(0 0 6px var(--cpu-color)); r: 7; }
-        .node.frontier-gpu { fill: var(--gpu-color); filter: drop-shadow(0 0 10px var(--gpu-color)); r: 10; }
+      .kernel-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 10px;
+      }
+      .platform-cpu {
+        border-left: 4px solid var(--cpu-color);
+        box-shadow: 0 0 15px rgba(88, 166, 255, 0.1);
+      }
+      .platform-gpu {
+        border-left: 4px solid var(--gpu-color);
+        box-shadow: 0 0 15px rgba(255, 123, 114, 0.1);
+      }
+      .kernel-badge.cpu {
+        background-color: rgba(88, 166, 255, 0.2);
+        border: 1px solid var(--cpu-color);
+        color: var(--cpu-color);
+      }
+      .kernel-badge.gpu {
+        background-color: rgba(255, 123, 114, 0.2);
+        border: 1px solid var(--gpu-color);
+        color: var(--gpu-color);
+      }
 
-        .log-panel { position: absolute; bottom: 20px; right: 20px; background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(8px); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; width: 320px; max-height: 250px; overflow-y: auto; font-size: 12px; font-family: monospace; }
-        .log-entry { margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; line-height: 1.4; }
-        .log-entry span { font-weight: bold; }
-        .log-entry:last-child { border-bottom: none; }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .btn-row {
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        flex: 1;
+        padding: 12px;
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: "Outfit";
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+      button:hover {
+        background-color: #3fb950;
+        transform: translateY(-1px);
+      }
+      button:disabled {
+        background-color: #21262d;
+        color: #8b949e;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .slider-cont {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .slider-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #8b949e;
+      }
+      input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+      }
+
+      .canvas-container {
+        flex: 1;
+        position: relative;
+      }
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+      .link {
+        stroke: #30363d;
+        stroke-opacity: 0.6;
+        stroke-width: 1.5px;
+        transition: stroke 0.3s;
+      }
+      .node {
+        fill: var(--node-idle);
+        stroke: #0d1117;
+        stroke-width: 2px;
+        transition: all 0.4s ease;
+      }
+      .node.visited {
+        fill: #484f58;
+        r: 3;
+      }
+      .node.frontier-cpu {
+        fill: var(--cpu-color);
+        filter: drop-shadow(0 0 6px var(--cpu-color));
+        r: 7;
+      }
+      .node.frontier-gpu {
+        fill: var(--gpu-color);
+        filter: drop-shadow(0 0 10px var(--gpu-color));
+        r: 10;
+      }
+
+      .log-panel {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(22, 27, 34, 0.8);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--border-color);
+        padding: 15px;
+        border-radius: 8px;
+        width: 320px;
+        max-height: 250px;
+        overflow-y: auto;
+        font-size: 12px;
+        font-family: monospace;
+      }
+      .log-entry {
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 6px;
+        line-height: 1.4;
+      }
+      .log-entry span {
+        font-weight: bold;
+      }
+      .log-entry:last-child {
+        border-bottom: none;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+      }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="sidebar">
-        <div class="title">Improved CGA-BFS</div>
-        <div class="subtitle">Feature-Aware DTA Simulation</div>
+      <div class="title">Improved CGA-BFS</div>
+      <div class="subtitle">Feature-Aware DTA Simulation</div>
 
-        <div class="stat-grid">
-            <div class="stat-box">
-                <div class="stat-label">Iteration</div>
-                <div class="stat-value" id="lbl-iter">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Fr. Size</div>
-                <div class="stat-value" id="lbl-frontier">1</div>
-            </div>
-            
-            <div class="stat-box full-width platform-cpu" id="platform-box">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <div>
-                        <div class="stat-label">Selected Environment</div>
-                        <div class="stat-value" id="lbl-platform">CPU</div>
-                    </div>
-                    <div class="kernel-badge cpu" id="lbl-kernel">PM-BHash</div>
-                </div>
-                
-                <div class="feature-box">
-                    <strong>Extracted Features:</strong><br>
-                    > F2 (Growth Rate): <span id="lbl-f2">1.00</span>x<br>
-                    > F1 (Deg Var)    : <span id="lbl-f1">Low</span><br>
-                    > F5 (SPA Ratio)  : <span id="lbl-f5">High</span>
-                </div>
-                
-                <div class="decision-box">
-                    <strong>Model Reasoning:</strong> <span id="lbl-reason">Iteration 0 (Frontier=1). Model 0 pre-filter bypasses ML to pick strictly-optimal PM-BHash.</span>
-                </div>
-            </div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-label">Iteration</div>
+          <div class="stat-value" id="lbl-iter">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Fr. Size</div>
+          <div class="stat-value" id="lbl-frontier">1</div>
         </div>
 
-        <div class="controls">
-            <div class="slider-cont">
-                <div class="slider-label">
-                    <span>Simulation Speed</span>
-                    <span id="speed-val">1.5s</span>
-                </div>
-                <input type="range" id="speed-slider" min="500" max="4000" value="1500" step="500">
+        <div class="stat-box full-width platform-cpu" id="platform-box">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            "
+          >
+            <div>
+              <div class="stat-label">Selected Environment</div>
+              <div class="stat-value" id="lbl-platform">CPU</div>
             </div>
-            <div class="btn-row">
-                <button id="btn-next" onclick="nextEpoch()">Step</button>
-                <button id="btn-run" onclick="autoRun()">Auto Run</button>
-            </div>
+            <div class="kernel-badge cpu" id="lbl-kernel">PM-BHash</div>
+          </div>
+
+          <div class="feature-box">
+            <strong>Extracted Features:</strong><br />
+            > F2 (Growth Rate): <span id="lbl-f2">1.00</span>x<br />
+            > F1 (Deg Var) : <span id="lbl-f1">Low</span><br />
+            > F5 (SPA Ratio) : <span id="lbl-f5">High</span>
+          </div>
+
+          <div class="decision-box">
+            <strong>Model Reasoning:</strong>
+            <span id="lbl-reason"
+              >Iteration 0 (Frontier=1). Model 0 pre-filter bypasses ML to pick
+              strictly-optimal PM-BHash.</span
+            >
+          </div>
         </div>
+      </div>
+
+      <div class="controls">
+        <div class="slider-cont">
+          <div class="slider-label">
+            <span>Simulation Speed</span>
+            <span id="speed-val">1.5s</span>
+          </div>
+          <input
+            type="range"
+            id="speed-slider"
+            min="500"
+            max="4000"
+            value="1500"
+            step="500"
+          />
+        </div>
+        <div class="btn-row">
+          <button id="btn-next" onclick="nextEpoch()">Step</button>
+          <button id="btn-run" onclick="autoRun()">Auto Run</button>
+        </div>
+      </div>
     </div>
 
     <div class="canvas-container">
-        <div class="log-panel" id="logger">
-            <div style="color:#58a6ff; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #30363d; padding-bottom:5px;">Execution Trace Log</div>
+      <div class="log-panel" id="logger">
+        <div
+          style="
+            color: #58a6ff;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 5px;
+          "
+        >
+          Execution Trace Log
         </div>
-        <svg id="network-canvas"></svg>
+      </div>
+      <svg id="network-canvas"></svg>
     </div>
 
     <script>
-        const N_NODES = 450;
-        const nodes = Array.from({length: N_NODES}, (_, i) => ({id: i, depth: -1}));
-        const links = [];
-        
-        // Generate pseudo-realistic graph Structure (Tree + Clusters + Dense Core)
-        for (let i = 1; i < N_NODES; i++) { links.push({source: Math.floor(Math.random() * Math.min(i, 30)), target: i}); }
-        for (let i = 0; i < N_NODES * 2; i++) { links.push({ source: Math.floor(Math.random() * N_NODES), target: Math.floor(Math.random() * N_NODES) }); }
+      const N_NODES = 450
+      const nodes = Array.from({ length: N_NODES }, (_, i) => ({
+        id: i,
+        depth: -1,
+      }))
+      const links = []
 
-        const width = document.querySelector('.canvas-container').clientWidth;
-        const height = document.querySelector('.canvas-container').clientHeight;
-        const svg = d3.select("#network-canvas");
-        
-        const simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(25))
-            .force("charge", d3.forceManyBody().strength(-20))
-            .force("center", d3.forceCenter(width / 2, height / 2));
+      // Generate pseudo-realistic graph Structure (Tree + Clusters + Dense Core)
+      for (let i = 1; i < N_NODES; i++) {
+        links.push({
+          source: Math.floor(Math.random() * Math.min(i, 30)),
+          target: i,
+        })
+      }
+      for (let i = 0; i < N_NODES * 2; i++) {
+        links.push({
+          source: Math.floor(Math.random() * N_NODES),
+          target: Math.floor(Math.random() * N_NODES),
+        })
+      }
 
-        const linkLayer = svg.append("g"); const nodeLayer = svg.append("g");
-        const linkElements = linkLayer.selectAll("line").data(links).enter().append("line").attr("class", "link");
-        const nodeElements = nodeLayer.selectAll("circle").data(nodes).enter().append("circle").attr("class", "node").attr("r", 5);
+      const width = document.querySelector(".canvas-container").clientWidth
+      const height = document.querySelector(".canvas-container").clientHeight
+      const svg = d3.select("#network-canvas")
 
-        simulation.on("tick", () => {
-            linkElements.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-            nodeElements.attr("cx", d => Math.max(10, Math.min(width - 10, d.x))).attr("cy", d => Math.max(10, Math.min(height - 10, d.y)));
-        });
+      const simulation = d3
+        .forceSimulation(nodes)
+        .force(
+          "link",
+          d3
+            .forceLink(links)
+            .id((d) => d.id)
+            .distance(25),
+        )
+        .force("charge", d3.forceManyBody().strength(-20))
+        .force("center", d3.forceCenter(width / 2, height / 2))
 
-        let iter = 0;
-        let frontier = [0];
-        let prevFrontierSize = 0;
-        nodes[0].depth = 0;
+      const linkLayer = svg.append("g")
+      const nodeLayer = svg.append("g")
+      const linkElements = linkLayer
+        .selectAll("line")
+        .data(links)
+        .enter()
+        .append("line")
+        .attr("class", "link")
+      const nodeElements = nodeLayer
+        .selectAll("circle")
+        .data(nodes)
+        .enter()
+        .append("circle")
+        .attr("class", "node")
+        .attr("r", 5)
 
-        // Improved DTA feature extraction simulator
-        const improvedPolicy = (nnz, prev_nnz, it) => {
-            if (nnz === 0) return { platform: 'N/A', kernel: 'HALT', f2: '0.00', f1: 'N/A', f5: 'N/A', reason: 'Graph disconnected, traversal complete.', col: '#8b949e' };
-            
-            // F2: Frontier Growth Rate = log(x_nnz / max(prev_nnz, 1)) represented as a ratio here for clarity
-            let rawRatio = nnz / Math.max(prev_nnz, 1);
-            if (it === 0) rawRatio = 1.0;
-            const growthRate = rawRatio.toFixed(2);
-            
-            // Simulate F1 (Degree Variance) and F5 (SPA Ratio) loosely based on iteration depth and size
-            let f1_var = it < 3 ? "Low" : (growthRate > 2.0 ? "High" : "Medium");
-            let f5_ratio = nnz < 50 ? "High" : "Low"; 
+      simulation.on("tick", () => {
+        linkElements
+          .attr("x1", (d) => d.source.x)
+          .attr("y1", (d) => d.source.y)
+          .attr("x2", (d) => d.target.x)
+          .attr("y2", (d) => d.target.y)
+        nodeElements
+          .attr("cx", (d) => Math.max(10, Math.min(width - 10, d.x)))
+          .attr("cy", (d) => Math.max(10, Math.min(height - 10, d.y)))
+      })
 
-            let res = { f2: growthRate, f1: f1_var, f5: f5_ratio };
+      let iter = 0
+      let frontier = [0]
+      let prevFrontierSize = 0
+      nodes[0].depth = 0
 
-            if (it === 0 || nnz === 1) {
-                res.platform = 'CPU'; res.kernel = 'PM-BHash'; res.col = 'var(--cpu-color)';
-                res.reason = 'Frontier=1. <b>Model 0 pre-filter</b> bypasses ML. PM-BHash is strictly optimal for single vertices.';
-            } else if (nnz > 150 || growthRate > 2.5) {
-                // One-Copy transfer trigger 
-                res.platform = 'GPU'; res.kernel = 'CSR SpMV'; res.col = 'var(--gpu-color)';
-                res.reason = `Growth Rate is explosive (${growthRate}x). <b>Universal Model 4</b> triggered One-Copy transfer to GPU SpMV kernel for high bandwidth.`;
-            } else if (f1_var === "High" && nnz > 30) {
-                res.platform = 'CPU'; res.kernel = 'LB-PM-BHash'; res.col = 'var(--cpu-color)';
-                res.reason = `Variance is High (F1). CPU Kernel Selector <b>(Model 2)</b> chose Load-Balanced PM-BHash to mitigate heavy thread skew.`;
-            } else if (f5_ratio === "Low") {
-                res.platform = 'CPU'; res.kernel = 'LB-MSPA'; res.col = 'var(--cpu-color)';
-                res.reason = `Dense sufficient but below GPU threshold. Low SPA Init Penalty (F5) -> <b>Model 2</b> selected LB-MSPA.`;
-            } else {
-                res.platform = 'CPU'; res.kernel = 'PB-MSPA'; res.col = 'var(--cpu-color)';
-                res.reason = `Normal geometric growth. <b>Model 2</b> selected PB-MSPA format. SW-UCB exploration did not intervene.`;
-            }
-            return res;
-        };
+      // Improved DTA feature extraction simulator
+      const improvedPolicy = (nnz, prev_nnz, it) => {
+        if (nnz === 0)
+          return {
+            platform: "N/A",
+            kernel: "HALT",
+            f2: "0.00",
+            f1: "N/A",
+            f5: "N/A",
+            reason: "Graph disconnected, traversal complete.",
+            col: "#8b949e",
+          }
 
-        function addLog(msg, color) {
-            const logger = document.getElementById('logger');
-            const d = document.createElement('div'); d.className = 'log-entry';
-            d.innerHTML = `<span style="color:${color}">${msg}</span>`;
-            logger.appendChild(d); logger.scrollTop = logger.scrollHeight;
+        // F2: Frontier Growth Rate = log(x_nnz / max(prev_nnz, 1)) represented as a ratio here for clarity
+        let rawRatio = nnz / Math.max(prev_nnz, 1)
+        if (it === 0) rawRatio = 1.0
+        const growthRate = rawRatio.toFixed(2)
+
+        // Simulate F1 (Degree Variance) and F5 (SPA Ratio) loosely based on iteration depth and size
+        let f1_var = it < 3 ? "Low" : growthRate > 2.0 ? "High" : "Medium"
+        let f5_ratio = nnz < 50 ? "High" : "Low"
+
+        let res = { f2: growthRate, f1: f1_var, f5: f5_ratio }
+
+        if (it === 0 || nnz === 1) {
+          res.platform = "CPU"
+          res.kernel = "PM-BHash"
+          res.col = "var(--cpu-color)"
+          res.reason =
+            "Frontier=1. <b>Model 0 pre-filter</b> bypasses ML. PM-BHash is strictly optimal for single vertices."
+        } else if (nnz > 150 || growthRate > 2.5) {
+          // One-Copy transfer trigger
+          res.platform = "GPU"
+          res.kernel = "CSR SpMV"
+          res.col = "var(--gpu-color)"
+          res.reason = `Growth Rate is explosive (${growthRate}x). <b>Universal Model 4</b> triggered One-Copy transfer to GPU SpMV kernel for high bandwidth.`
+        } else if (f1_var === "High" && nnz > 30) {
+          res.platform = "CPU"
+          res.kernel = "LB-PM-BHash"
+          res.col = "var(--cpu-color)"
+          res.reason = `Variance is High (F1). CPU Kernel Selector <b>(Model 2)</b> chose Load-Balanced PM-BHash to mitigate heavy thread skew.`
+        } else if (f5_ratio === "Low") {
+          res.platform = "CPU"
+          res.kernel = "LB-MSPA"
+          res.col = "var(--cpu-color)"
+          res.reason = `Dense sufficient but below GPU threshold. Low SPA Init Penalty (F5) -> <b>Model 2</b> selected LB-MSPA.`
+        } else {
+          res.platform = "CPU"
+          res.kernel = "PB-MSPA"
+          res.col = "var(--cpu-color)"
+          res.reason = `Normal geometric growth. <b>Model 2</b> selected PB-MSPA format. SW-UCB exploration did not intervene.`
+        }
+        return res
+      }
+
+      function addLog(msg, color) {
+        const logger = document.getElementById("logger")
+        const d = document.createElement("div")
+        d.className = "log-entry"
+        d.innerHTML = `<span style="color:${color}">${msg}</span>`
+        logger.appendChild(d)
+        logger.scrollTop = logger.scrollHeight
+      }
+
+      function updateUI(frontierSize, policy) {
+        document.getElementById("lbl-iter").innerText = iter
+        document.getElementById("lbl-frontier").innerText = frontierSize
+
+        const pbox = document.getElementById("platform-box")
+        const kbadge = document.getElementById("lbl-kernel")
+
+        if (policy.platform === "CPU") {
+          pbox.className = "stat-box full-width platform-cpu"
+          kbadge.className = "kernel-badge cpu"
+        } else if (policy.platform === "GPU") {
+          pbox.className = "stat-box full-width platform-gpu"
+          kbadge.className = "kernel-badge gpu"
+        } else {
+          pbox.className = "stat-box full-width"
+          kbadge.style.display = "none"
         }
 
-        function updateUI(frontierSize, policy) {
-            document.getElementById('lbl-iter').innerText = iter;
-            document.getElementById('lbl-frontier').innerText = frontierSize;
-            
-            const pbox = document.getElementById('platform-box');
-            const kbadge = document.getElementById('lbl-kernel');
-            
-            if (policy.platform === 'CPU') { pbox.className = "stat-box full-width platform-cpu"; kbadge.className = "kernel-badge cpu"; }
-            else if (policy.platform === 'GPU') { pbox.className = "stat-box full-width platform-gpu"; kbadge.className = "kernel-badge gpu"; }
-            else { pbox.className = "stat-box full-width"; kbadge.style.display = 'none'; }
-
-            document.getElementById('lbl-platform').innerText = policy.platform;
-            if(policy.kernel !== 'HALT') { kbadge.style.display = 'inline-block'; kbadge.innerText = policy.kernel; }
-            
-            document.getElementById('lbl-f2').innerText = policy.f2;
-            document.getElementById('lbl-f1').innerText = policy.f1;
-            document.getElementById('lbl-f5').innerText = policy.f5;
-            document.getElementById('lbl-reason').innerHTML = policy.reason;
+        document.getElementById("lbl-platform").innerText = policy.platform
+        if (policy.kernel !== "HALT") {
+          kbadge.style.display = "inline-block"
+          kbadge.innerText = policy.kernel
         }
 
-        let isRunning = false;
-        let intervalId = null;
+        document.getElementById("lbl-f2").innerText = policy.f2
+        document.getElementById("lbl-f1").innerText = policy.f1
+        document.getElementById("lbl-f5").innerText = policy.f5
+        document.getElementById("lbl-reason").innerHTML = policy.reason
+      }
 
-        document.getElementById('speed-slider').addEventListener('input', (e) => {
-            const val = e.target.value;
-            document.getElementById('speed-val').innerText = (val/1000).toFixed(1) + 's';
-            if(isRunning) { clearInterval(intervalId); startInterval(); }
-        });
+      let isRunning = false
+      let intervalId = null
 
-        function startInterval() {
-            const speed = parseInt(document.getElementById('speed-slider').value);
-            intervalId = setInterval(() => { if (frontier.length === 0) { clearInterval(intervalId); document.getElementById('btn-run').disabled = true; return; } nextEpoch(); }, speed);
+      document.getElementById("speed-slider").addEventListener("input", (e) => {
+        const val = e.target.value
+        document.getElementById("speed-val").innerText =
+          (val / 1000).toFixed(1) + "s"
+        if (isRunning) {
+          clearInterval(intervalId)
+          startInterval()
         }
+      })
 
-        function nextEpoch() {
-            if (frontier.length === 0) return;
-            iter++;
-            prevFrontierSize = frontier.length;
-            const nextFrontier = [];
-            
-            nodeElements.filter(d => frontier.includes(d.id)).attr("class", "node visited").style("filter", "none").attr("r", 3);
+      function startInterval() {
+        const speed = parseInt(document.getElementById("speed-slider").value)
+        intervalId = setInterval(() => {
+          if (frontier.length === 0) {
+            clearInterval(intervalId)
+            document.getElementById("btn-run").disabled = true
+            return
+          }
+          nextEpoch()
+        }, speed)
+      }
 
-            let newEdges = 0;
-            links.forEach(l => {
-                if (frontier.includes(l.source.id) && l.target.depth === -1) { l.target.depth = iter; nextFrontier.push(l.target.id); newEdges++; }
-                else if (frontier.includes(l.target.id) && l.source.depth === -1) { l.source.depth = iter; nextFrontier.push(l.source.id); newEdges++; }
-            });
+      function nextEpoch() {
+        if (frontier.length === 0) return
+        iter++
+        prevFrontierSize = frontier.length
+        const nextFrontier = []
 
-            frontier = [...new Set(nextFrontier)];
-            const policy = improvedPolicy(frontier.length, prevFrontierSize, iter);
-            const styleClass = policy.platform === 'CPU' ? 'frontier-cpu' : (policy.platform==='GPU' ? 'frontier-gpu' : 'visited');
+        nodeElements
+          .filter((d) => frontier.includes(d.id))
+          .attr("class", "node visited")
+          .style("filter", "none")
+          .attr("r", 3)
 
-            if(frontier.length > 0) nodeElements.filter(d => frontier.includes(d.id)).attr("class", `node ${styleClass}`);
-            
-            if (frontier.length > 0) {
-                addLog(`[Iter ${iter}] Found ${newEdges} edges -> Front=${frontier.length}. Placed on ${policy.kernel}.`, policy.col);
-                updateUI(frontier.length, policy);
-            } else {
-                addLog(`[Iter ${iter}] Traversal Completed.`, '#8b949e');
-                updateUI(0, policy);
-                if(isRunning) clearInterval(intervalId);
-                document.getElementById('btn-run').disabled = true;
-                document.getElementById('btn-next').disabled = true;
-            }
+        let newEdges = 0
+        links.forEach((l) => {
+          if (frontier.includes(l.source.id) && l.target.depth === -1) {
+            l.target.depth = iter
+            nextFrontier.push(l.target.id)
+            newEdges++
+          } else if (frontier.includes(l.target.id) && l.source.depth === -1) {
+            l.source.depth = iter
+            nextFrontier.push(l.source.id)
+            newEdges++
+          }
+        })
+
+        frontier = [...new Set(nextFrontier)]
+        const policy = improvedPolicy(frontier.length, prevFrontierSize, iter)
+        const styleClass =
+          policy.platform === "CPU"
+            ? "frontier-cpu"
+            : policy.platform === "GPU"
+              ? "frontier-gpu"
+              : "visited"
+
+        if (frontier.length > 0)
+          nodeElements
+            .filter((d) => frontier.includes(d.id))
+            .attr("class", `node ${styleClass}`)
+
+        if (frontier.length > 0) {
+          addLog(
+            `[Iter ${iter}] Found ${newEdges} edges -> Front=${frontier.length}. Placed on ${policy.kernel}.`,
+            policy.col,
+          )
+          updateUI(frontier.length, policy)
+        } else {
+          addLog(`[Iter ${iter}] Traversal Completed.`, "#8b949e")
+          updateUI(0, policy)
+          if (isRunning) clearInterval(intervalId)
+          document.getElementById("btn-run").disabled = true
+          document.getElementById("btn-next").disabled = true
         }
+      }
 
-        function autoRun() {
-            if (isRunning) return;
-            isRunning = true;
-            document.getElementById('btn-run').disabled = true;
-            startInterval();
-        }
+      function autoRun() {
+        if (isRunning) return
+        isRunning = true
+        document.getElementById("btn-run").disabled = true
+        startInterval()
+      }
 
-        // Init frame
-        nodeElements.filter(d => d.id === 0).attr("class", "node frontier-cpu");
-        addLog(`[Iter 0] Started Root [0]. Front=1. PM-BHash.`, 'var(--cpu-color)');
+      // Init frame
+      nodeElements.filter((d) => d.id === 0).attr("class", "node frontier-cpu")
+      addLog(
+        `[Iter 0] Started Root [0]. Front=1. PM-BHash.`,
+        "var(--cpu-color)",
+      )
     </script>
-</body>
+  </body>
 </html>

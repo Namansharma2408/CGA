@@ -1,40 +1,238 @@
-
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans)}
-.page{padding:1.5rem 0}
-.section{margin-bottom:2rem}
-.sec-title{font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:.5px solid var(--color-border-tertiary)}
-.card{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem}
-.card.active{border-color:#7F77DD;border-width:1.5px}
-.pill{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;margin-right:4px}
-.pill.new{background:#EEEDFE;color:#3C3489}.pill.fix{background:#EAF3DE;color:#27500A}.pill.perf{background:#FAEEDA;color:#633806}
-h3{font-size:15px;font-weight:500;margin-bottom:.4rem;color:var(--color-text-primary)}
-p{font-size:13px;line-height:1.7;color:var(--color-text-secondary)}
-code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px;color:var(--color-text-primary)}
-pre{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:.75rem 1rem;border-radius:8px;overflow-x:auto;line-height:1.6;color:var(--color-text-primary);margin:.5rem 0}
-.algo-step{display:flex;gap:12px;margin-bottom:.5rem;align-items:flex-start}
-.step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:2px}
-.num-purple{background:#EEEDFE;color:#3C3489}.num-teal{background:#E1F5EE;color:#085041}.num-amber{background:#FAEEDA;color:#633806}.num-coral{background:#FAECE7;color:#712B13}
-.tab-bar{display:flex;gap:4px;margin-bottom:1rem;flex-wrap:wrap}
-.tab{font-size:12px;padding:5px 12px;border:.5px solid var(--color-border-tertiary);border-radius:20px;background:transparent;cursor:pointer;color:var(--color-text-secondary);transition:all .15s}
-.tab.on{background:#EEEDFE;border-color:#7F77DD;color:#3C3489;font-weight:500}
-.pane{display:none}.pane.on{display:block}
-.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin:.5rem 0}
-.problem-box{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:8px;padding:.6rem .9rem;margin:.5rem 0}
-.arrow-row{display:flex;align-items:center;gap:8px;margin:.3rem 0}
-.arrow-label{font-size:12px;color:var(--color-text-secondary)}
-.arrow-line{flex:1;height:1px;background:var(--color-border-tertiary)}
-.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
-.cmp-card{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:8px;padding:.75rem}
-.cmp-card h4{font-size:13px;font-weight:500;margin-bottom:.3rem}
-.cmp-card p{font-size:12px}
-.cmp-card.bad{border-left:3px solid #E24B4A}.cmp-card.good{border-left:3px solid #1D9E75}
-.formula{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:8px;padding:.5rem .9rem;margin:.4rem 0;line-height:1.8}
-.tag-box{background:var(--color-background-secondary);border-radius:6px;padding:.4rem .7rem;font-size:12px;color:var(--color-text-secondary)}
-.impact{display:flex;align-items:center;gap:6px;margin:.3rem 0}
-.impact-bar{height:6px;border-radius:3px;background:var(--color-border-tertiary);flex:1}
-.impact-fill{height:6px;border-radius:3px}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: var(--font-sans);
+  }
+  .page {
+    padding: 1.5rem 0;
+  }
+  .section {
+    margin-bottom: 2rem;
+  }
+  .sec-title {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .card.active {
+    border-color: #7f77dd;
+    border-width: 1.5px;
+  }
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-right: 4px;
+  }
+  .pill.new {
+    background: #eeedfe;
+    color: #3c3489;
+  }
+  .pill.fix {
+    background: #eaf3de;
+    color: #27500a;
+  }
+  .pill.perf {
+    background: #faeeda;
+    color: #633806;
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--color-text-primary);
+  }
+  p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+  code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--color-background-tertiary);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--color-text-primary);
+  }
+  pre {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--color-background-tertiary);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    margin: 0.5rem 0;
+  }
+  .algo-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 0.5rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .num-purple {
+    background: #eeedfe;
+    color: #3c3489;
+  }
+  .num-teal {
+    background: #e1f5ee;
+    color: #085041;
+  }
+  .num-amber {
+    background: #faeeda;
+    color: #633806;
+  }
+  .num-coral {
+    background: #faece7;
+    color: #712b13;
+  }
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .tab {
+    font-size: 12px;
+    padding: 5px 12px;
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 20px;
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: all 0.15s;
+  }
+  .tab.on {
+    background: #eeedfe;
+    border-color: #7f77dd;
+    color: #3c3489;
+    font-weight: 500;
+  }
+  .pane {
+    display: none;
+  }
+  .pane.on {
+    display: block;
+  }
+  .badge-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+  }
+  .problem-box {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    margin: 0.5rem 0;
+  }
+  .arrow-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0.3rem 0;
+  }
+  .arrow-label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+  .arrow-line {
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-tertiary);
+  }
+  .cmp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .cmp-card {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 8px;
+    padding: 0.75rem;
+  }
+  .cmp-card h4 {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+  .cmp-card p {
+    font-size: 12px;
+  }
+  .cmp-card.bad {
+    border-left: 3px solid #e24b4a;
+  }
+  .cmp-card.good {
+    border-left: 3px solid #1d9e75;
+  }
+  .formula {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+    margin: 0.4rem 0;
+    line-height: 1.8;
+  }
+  .tag-box {
+    background: var(--color-background-secondary);
+    border-radius: 6px;
+    padding: 0.4rem 0.7rem;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+  .impact {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0.3rem 0;
+  }
+  .impact-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-border-tertiary);
+    flex: 1;
+  }
+  .impact-fill {
+    height: 6px;
+    border-radius: 3px;
+  }
 </style>
 
 <div class="page">
@@ -44,37 +242,68 @@ pre{font-family:var(--font-mono);font-size:12px;background:var(--color-backgroun
       <button class="tab on" onclick="show('features')">1 — Features</button>
       <button class="tab" onclick="show('training')">2 — Training</button>
       <button class="tab" onclick="show('dta')">3 — DTA Algorithm</button>
-      <button class="tab" onclick="show('model')">4 — Model Architecture</button>
+      <button class="tab" onclick="show('model')">
+        4 — Model Architecture
+      </button>
       <button class="tab" onclick="show('inference')">5 — Inference</button>
     </div>
 
     <!-- ═══════════════════════════════════ FEATURES ═══════════════════════ -->
     <div class="pane on" id="pane-features">
-
       <div class="card">
-        <div class="badge-row"><span class="pill fix">current problem</span></div>
+        <div class="badge-row">
+          <span class="pill fix">current problem</span>
+        </div>
         <h3>What your feature.cpp computes now</h3>
-        <p>Your 19 features are correct as the paper describes, but several are <strong>too coarse</strong> and two have known bugs.</p>
+        <p>
+          Your 19 features are correct as the paper describes, but several are
+          <strong>too coarse</strong> and two have known bugs.
+        </p>
         <div class="problem-box">
-          <p>Bug 1: <code>col_counts = row_counts</code> — you copy row counts into col counts for "symmetric graphs". This is wrong for directed graphs and produces <code>gini_col == gini_row</code> always. Pass the CSC <code>indptr</code> separately.</p>
+          <p>
+            Bug 1: <code>col_counts = row_counts</code> — you copy row counts
+            into col counts for "symmetric graphs". This is wrong for directed
+            graphs and produces <code>gini_col == gini_row</code> always. Pass
+            the CSC <code>indptr</code> separately.
+          </p>
         </div>
         <div class="problem-box">
-          <p>Bug 2: <code>is_scale_free</code> is a binary 0/1 feature. The decision tree cannot learn a continuous boundary from a boolean. Replace with the raw <code>gini_row</code> (already present) — the tree will pick its own threshold.</p>
+          <p>
+            Bug 2: <code>is_scale_free</code> is a binary 0/1 feature. The
+            decision tree cannot learn a continuous boundary from a boolean.
+            Replace with the raw <code>gini_row</code> (already present) — the
+            tree will pick its own threshold.
+          </p>
         </div>
         <div class="problem-box">
-          <p>Bug 3 (train_models.py): <code>x_density = np.random.uniform(0.001, 1.0)</code> — you randomise the most important feature instead of measuring it from actual BFS traversals. This is the main reason your models have poor accuracy.</p>
+          <p>
+            Bug 3 (train_models.py):
+            <code>x_density = np.random.uniform(0.001, 1.0)</code> — you
+            randomise the most important feature instead of measuring it from
+            actual BFS traversals. This is the main reason your models have poor
+            accuracy.
+          </p>
         </div>
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill new">new features to add</span></div>
+        <div class="badge-row">
+          <span class="pill new">new features to add</span>
+        </div>
         <h3>6 new features with high discriminative power</h3>
 
         <div class="algo-step">
           <div class="step-num num-purple">F1</div>
           <div>
-            <p><strong>degree_variance</strong> — <code>var(row_counts)</code></p>
-            <p>The paper uses Gini to measure skew, but Gini is robust to outliers. High-degree hubs (star nodes) that dominate BFS are better captured by variance. Helps Model 1 separate social networks from random graphs.</p>
+            <p>
+              <strong>degree_variance</strong> — <code>var(row_counts)</code>
+            </p>
+            <p>
+              The paper uses Gini to measure skew, but Gini is robust to
+              outliers. High-degree hubs (star nodes) that dominate BFS are
+              better captured by variance. Helps Model 1 separate social
+              networks from random graphs.
+            </p>
             <div class="formula">f[19] = row_std² = Σ(d_i - d̄)² / n</div>
           </div>
         </div>
@@ -82,8 +311,17 @@ pre{font-family:var(--font-mono);font-size:12px;background:var(--color-backgroun
         <div class="algo-step">
           <div class="step-num num-purple">F2</div>
           <div>
-            <p><strong>frontier_growth_rate</strong> — ratio of current frontier to previous</p>
-            <p>The paper's x_decreasing (F13) is binary. The <em>rate</em> of growth tells Model 3 whether the GPU→CPU transfer is imminent: a BFS expanding fast (ratio &gt; 2) will soon peak; one contracting fast (ratio &lt; 0.5) is near the tail. This is the single highest-value new feature.</p>
+            <p>
+              <strong>frontier_growth_rate</strong> — ratio of current frontier
+              to previous
+            </p>
+            <p>
+              The paper's x_decreasing (F13) is binary. The <em>rate</em> of
+              growth tells Model 3 whether the GPU→CPU transfer is imminent: a
+              BFS expanding fast (ratio &gt; 2) will soon peak; one contracting
+              fast (ratio &lt; 0.5) is near the tail. This is the single
+              highest-value new feature.
+            </p>
             <div class="formula">f[20] = log(x_nnz / max(x_nnz_prev, 1))</div>
           </div>
         </div>
@@ -91,45 +329,92 @@ pre{font-family:var(--font-mono);font-size:12px;background:var(--color-backgroun
         <div class="algo-step">
           <div class="step-num num-teal">F3</div>
           <div>
-            <p><strong>bucket_load_ratio</strong> — estimated load imbalance of PM-BHash</p>
-            <p>The load-balanced variants (LB-*) pay a prefix-sum overhead that's only worth it when the imbalance is high. Your model currently uses <code>degree_x</code> as a proxy, but that's the average — the max-degree column drives actual imbalance.</p>
-            <div class="formula">f[21] = row_max / max(row_mean, 1)  &nbsp; (peak-to-mean ratio)</div>
+            <p>
+              <strong>bucket_load_ratio</strong> — estimated load imbalance of
+              PM-BHash
+            </p>
+            <p>
+              The load-balanced variants (LB-*) pay a prefix-sum overhead that's
+              only worth it when the imbalance is high. Your model currently
+              uses <code>degree_x</code> as a proxy, but that's the average —
+              the max-degree column drives actual imbalance.
+            </p>
+            <div class="formula">
+              f[21] = row_max / max(row_mean, 1) &nbsp; (peak-to-mean ratio)
+            </div>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-teal">F4</div>
           <div>
-            <p><strong>hash_collision_pressure</strong> — expected hash table conflicts</p>
-            <p>PM-BHash's inner hash table performs poorly when bucket occupancy is high (load factor &gt; 0.7 triggers linear probe chains). This feature predicts that pressure directly and helps Model 2 prefer PB-MSPA when hash tables would thrash.</p>
-            <div class="formula">f[22] = degree_x_m / n_buckets &nbsp;&nbsp; (n_buckets = 4 × n_threads)</div>
+            <p>
+              <strong>hash_collision_pressure</strong> — expected hash table
+              conflicts
+            </p>
+            <p>
+              PM-BHash's inner hash table performs poorly when bucket occupancy
+              is high (load factor &gt; 0.7 triggers linear probe chains). This
+              feature predicts that pressure directly and helps Model 2 prefer
+              PB-MSPA when hash tables would thrash.
+            </p>
+            <div class="formula">
+              f[22] = degree_x_m / n_buckets &nbsp;&nbsp; (n_buckets = 4 ×
+              n_threads)
+            </div>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-amber">F5</div>
           <div>
-            <p><strong>spa_init_ratio</strong> — cost of O(n) SPA init vs useful work</p>
-            <p>LB-MSPA's main bottleneck is initialising the dense SPA array. This feature quantifies when that overhead dominates: when the ratio is large, PM-BHash wins despite higher per-element cost.</p>
-            <div class="formula">f[23] = n / max(masked_valid_nnz, 1) &nbsp;&nbsp; (init cost per result)</div>
+            <p>
+              <strong>spa_init_ratio</strong> — cost of O(n) SPA init vs useful
+              work
+            </p>
+            <p>
+              LB-MSPA's main bottleneck is initialising the dense SPA array.
+              This feature quantifies when that overhead dominates: when the
+              ratio is large, PM-BHash wins despite higher per-element cost.
+            </p>
+            <div class="formula">
+              f[23] = n / max(masked_valid_nnz, 1) &nbsp;&nbsp; (init cost per
+              result)
+            </div>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-amber">F6</div>
           <div>
-            <p><strong>transfer_cost_estimate</strong> — relative cost of GPU↔CPU data transfer</p>
-            <p>The paper's one-copy heuristic is a binary: transfer or don't. Model 4 would benefit from a continuous estimate of whether the transfer cost is justified by computation savings.</p>
-            <div class="formula">f[24] = (x_nnz × 8 bytes) / peak_bandwidth_GBs &nbsp;&nbsp; (microseconds)</div>
-            <p>Use the platform's measured bandwidth from a one-time calibration at startup.</p>
+            <p>
+              <strong>transfer_cost_estimate</strong> — relative cost of GPU↔CPU
+              data transfer
+            </p>
+            <p>
+              The paper's one-copy heuristic is a binary: transfer or don't.
+              Model 4 would benefit from a continuous estimate of whether the
+              transfer cost is justified by computation savings.
+            </p>
+            <div class="formula">
+              f[24] = (x_nnz × 8 bytes) / peak_bandwidth_GBs &nbsp;&nbsp;
+              (microseconds)
+            </div>
+            <p>
+              Use the platform's measured bandwidth from a one-time calibration
+              at startup.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill perf">implementation</span></div>
+        <div class="badge-row">
+          <span class="pill perf">implementation</span>
+        </div>
         <h3>Revised <code>build_feature_vector()</code></h3>
-        <pre>// In features.h — expand DIM to 25
+        <pre>
+// In features.h — expand DIM to 25
 static constexpr int DIM = 25;
 
 // In features.cpp — add to build_feature_vector():
@@ -151,58 +436,104 @@ f[20] = growth_rate;
 f[21] = peak_to_mean;
 f[22] = hash_pressure;
 f[23] = std::log1p(spa_init_ratio);
-f[24] = std::log1p(xfer_cost_us);</pre>
-        <p>Also fix: pass both <code>csr_indptr</code> and <code>csc_indptr</code> to <code>compute_matrix_stats()</code> so col_counts are correct.</p>
+f[24] = std::log1p(xfer_cost_us);</pre
+        >
+        <p>
+          Also fix: pass both <code>csr_indptr</code> and
+          <code>csc_indptr</code> to <code>compute_matrix_stats()</code> so
+          col_counts are correct.
+        </p>
       </div>
-
     </div>
 
     <!-- ═══════════════════════════════════ TRAINING ═══════════════════════ -->
     <div class="pane" id="pane-training">
-
       <div class="card">
         <div class="badge-row"><span class="pill fix">critical fix</span></div>
         <h3>The core problem: randomised features instead of measured ones</h3>
         <div class="cmp-grid">
           <div class="cmp-card bad">
             <h4>Current (wrong)</h4>
-            <p><code>x_density = np.random.uniform(0.001, 1.0)</code><br>You are generating random labels from features that were also randomised. The model learns nothing about real BFS behaviour.</p>
+            <p>
+              <code>x_density = np.random.uniform(0.001, 1.0)</code><br />You
+              are generating random labels from features that were also
+              randomised. The model learns nothing about real BFS behaviour.
+            </p>
           </div>
           <div class="cmp-card good">
             <h4>Should be</h4>
-            <p>Run actual BFS traversals on each training graph, record the true x_nnz, m_nnz, and kernel execution times at each depth, and use those as training rows.</p>
+            <p>
+              Run actual BFS traversals on each training graph, record the true
+              x_nnz, m_nnz, and kernel execution times at each depth, and use
+              those as training rows.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill new">improved training algorithm</span></div>
+        <div class="badge-row">
+          <span class="pill new">improved training algorithm</span>
+        </div>
         <h3>Algorithm: Profiling-based label collection</h3>
 
         <div class="algo-step">
           <div class="step-num num-purple">1</div>
           <div>
             <p><strong>For each training graph G:</strong></p>
-            <p>Run a complete BFS from the highest-degree vertex. At each iteration, record the feature vector and run ALL kernels in random order (to avoid cache warm effects), recording their execution times.</p>
+            <p>
+              Run a complete BFS from the highest-degree vertex. At each
+              iteration, record the feature vector and run ALL kernels in random
+              order (to avoid cache warm effects), recording their execution
+              times.
+            </p>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-purple">2</div>
           <div>
-            <p><strong>Label assignment — do NOT use heuristic rules.</strong></p>
-            <p>The optimal label for each row is <code>argmin(kernel_times)</code>. The paper trains from ground-truth timing, not from "<code>if xd &gt; 0.05 then SpMV</code>". Your current code does the latter, which just teaches the tree to reproduce your hardcoded threshold — not to learn better ones.</p>
-            <div class="formula">y_cpu[i] = argmin_k { t_PM-BHash, t_LB-PM-BHash, t_PB-MSPA, t_LB-PB-MSPA, t_LB-MSPA }</div>
+            <p>
+              <strong>Label assignment — do NOT use heuristic rules.</strong>
+            </p>
+            <p>
+              The optimal label for each row is
+              <code>argmin(kernel_times)</code>. The paper trains from
+              ground-truth timing, not from "<code
+                >if xd &gt; 0.05 then SpMV</code
+              >". Your current code does the latter, which just teaches the tree
+              to reproduce your hardcoded threshold — not to learn better ones.
+            </p>
+            <div class="formula">
+              y_cpu[i] = argmin_k { t_PM-BHash, t_LB-PM-BHash, t_PB-MSPA,
+              t_LB-PB-MSPA, t_LB-MSPA }
+            </div>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-teal">3</div>
           <div>
-            <p><strong>Sample weighting — Eq. 6 from paper (you have this, use it properly):</strong></p>
-            <p>Your Python code has <code>sample_weights_eq6</code> but <code>train_models.py</code> never calls it. Pass the timing matrix to the weight function and use the weights in <code>clf.fit(X, y, sample_weight=w)</code>.</p>
-            <div class="formula">w_i = exp( β/(k−1) × Σ_{j≠opt} (t_j / t_opt − 1) )</div>
-            <p>This gives high weight to cases where the optimal kernel is clearly better, and low weight to cases where all kernels are similar. β=1.0 is a good start.</p>
+            <p>
+              <strong
+                >Sample weighting — Eq. 6 from paper (you have this, use it
+                properly):</strong
+              >
+            </p>
+            <p>
+              Your Python code has <code>sample_weights_eq6</code> but
+              <code>train_models.py</code> never calls it. Pass the timing
+              matrix to the weight function and use the weights in
+              <code>clf.fit(X, y, sample_weight=w)</code>.
+            </p>
+            <div class="formula">
+              w_i = exp( β/(k−1) × Σ_{j≠opt} (t_j / t_opt − 1) )
+            </div>
+            <p>
+              This gives high weight to cases where the optimal kernel is
+              clearly better, and low weight to cases where all kernels are
+              similar. β=1.0 is a good start.
+            </p>
           </div>
         </div>
 
@@ -210,12 +541,19 @@ f[24] = std::log1p(xfer_cost_us);</pre>
           <div class="step-num num-teal">4</div>
           <div>
             <p><strong>Stratified training split by graph family:</strong></p>
-            <p>Currently no stratification. If 80% of graphs are scale-free, the model overfits to that family. Use <code>StratifiedKFold</code> with graph family as the strata, not random split.</p>
-            <pre>from sklearn.model_selection import StratifiedKFold
+            <p>
+              Currently no stratification. If 80% of graphs are scale-free, the
+              model overfits to that family. Use
+              <code>StratifiedKFold</code> with graph family as the strata, not
+              random split.
+            </p>
+            <pre>
+from sklearn.model_selection import StratifiedKFold
 skf = StratifiedKFold(n_splits=5, shuffle=True)
 for train_idx, val_idx in skf.split(X, graph_family_labels):
     # train on fold, evaluate on held-out fold
-    ...</pre>
+    ...</pre
+            >
           </div>
         </div>
 
@@ -223,73 +561,155 @@ for train_idx, val_idx in skf.split(X, graph_family_labels):
           <div class="step-num num-amber">5</div>
           <div>
             <p><strong>Depth-of-iteration weighting:</strong></p>
-            <p>Early BFS iterations (depth 1-3) are rarer but more important — they determine platform choice. Late iterations (depth N-3 to N) are also critical for the GPU→CPU transfer. Give middle iterations lower weight.</p>
-            <div class="formula">depth_weight[d] = 1 + 2×exp(−d/3) + 2×exp(−(D−d)/3)</div>
-            <p>Multiply <code>depth_weight[d]</code> into the sample weight <code>w_i</code> from Eq.6.</p>
+            <p>
+              Early BFS iterations (depth 1-3) are rarer but more important —
+              they determine platform choice. Late iterations (depth N-3 to N)
+              are also critical for the GPU→CPU transfer. Give middle iterations
+              lower weight.
+            </p>
+            <div class="formula">
+              depth_weight[d] = 1 + 2×exp(−d/3) + 2×exp(−(D−d)/3)
+            </div>
+            <p>
+              Multiply <code>depth_weight[d]</code> into the sample weight
+              <code>w_i</code> from Eq.6.
+            </p>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-amber">6</div>
           <div>
-            <p><strong>Depth for Model 1 (Platform Selector): don't use depth=6 for all models.</strong></p>
-            <p>Model 1 only uses matrix features (9 dims) and classifies 2 classes. It needs depth ≤ 3 or it will overfit to training graph indices. Models 2-4 use all 25 features and classify 5-7 classes — they can use depth 6-8.</p>
-            <div class="formula">M1: max_depth=3 &nbsp;| M2: max_depth=7 &nbsp;| M3: max_depth=6 &nbsp;| M4: max_depth=8</div>
+            <p>
+              <strong
+                >Depth for Model 1 (Platform Selector): don't use depth=6 for
+                all models.</strong
+              >
+            </p>
+            <p>
+              Model 1 only uses matrix features (9 dims) and classifies 2
+              classes. It needs depth ≤ 3 or it will overfit to training graph
+              indices. Models 2-4 use all 25 features and classify 5-7 classes —
+              they can use depth 6-8.
+            </p>
+            <div class="formula">
+              M1: max_depth=3 &nbsp;| M2: max_depth=7 &nbsp;| M3: max_depth=6
+              &nbsp;| M4: max_depth=8
+            </div>
           </div>
         </div>
-
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill new">new: transfer learning between platforms</span></div>
+        <div class="badge-row">
+          <span class="pill new">new: transfer learning between platforms</span>
+        </div>
         <h3>Platform-adaptive re-training</h3>
-        <p>The paper trains once and deploys. Your novel extension: train a "base model" on a reference platform, then when deployed on a new platform, collect 50-100 BFS timing samples and fine-tune by re-fitting only the leaf values of the existing tree (not the structure). This is faster than full retraining and preserves the tree structure.</p>
-        <pre># After collecting new_X, new_y from 50 BFS iterations on the new platform:
+        <p>
+          The paper trains once and deploys. Your novel extension: train a "base
+          model" on a reference platform, then when deployed on a new platform,
+          collect 50-100 BFS timing samples and fine-tune by re-fitting only the
+          leaf values of the existing tree (not the structure). This is faster
+          than full retraining and preserves the tree structure.
+        </p>
+        <pre>
+# After collecting new_X, new_y from 50 BFS iterations on the new platform:
 # Re-fit only leaf distributions — keep tree structure fixed
 for leaf_id in clf.apply(new_X):
     leaf_counts[leaf_id] += 1
     leaf_class_counts[leaf_id][new_y] += 1
-# Override predict to use updated leaf distributions instead of training ones</pre>
+# Override predict to use updated leaf distributions instead of training ones</pre
+        >
       </div>
-
     </div>
 
     <!-- ═══════════════════════════════════ DTA ═══════════════════════════ -->
     <div class="pane" id="pane-dta">
-
       <div class="card">
-        <div class="badge-row"><span class="pill fix">current problem in your DTA</span></div>
+        <div class="badge-row">
+          <span class="pill fix">current problem in your DTA</span>
+        </div>
         <h3>3 issues in your <code>inference.cpp</code> DTA</h3>
-        <div class="problem-box"><p>Issue 1: UCB uses <code>ema_ms</code> for the score but the bonus term is based on <code>n_obs</code>. After 20 iterations, the bonus shrinks to near zero even for rarely-tried kernels. Use a sliding window count of recent observations instead of total count.</p></div>
-        <div class="problem-box"><p>Issue 2: Threshold gradient is only updated when the chosen kernel matches a specific category (SpMV, PM-BHash). After a few iterations, once greedy selection locks in, thresholds stop updating entirely. Add a forced gradient update even when the rival's EMA is not fresh enough.</p></div>
-        <div class="problem-box"><p>Issue 3: <code>explore_left</code> only decrements when a non-greedy choice is found. If the UCB score always agrees with greedy (e.g. all kernels have been tried), exploration never fires. Add a random probe every 10 iterations as a fallback.</p></div>
+        <div class="problem-box">
+          <p>
+            Issue 1: UCB uses <code>ema_ms</code> for the score but the bonus
+            term is based on <code>n_obs</code>. After 20 iterations, the bonus
+            shrinks to near zero even for rarely-tried kernels. Use a sliding
+            window count of recent observations instead of total count.
+          </p>
+        </div>
+        <div class="problem-box">
+          <p>
+            Issue 2: Threshold gradient is only updated when the chosen kernel
+            matches a specific category (SpMV, PM-BHash). After a few
+            iterations, once greedy selection locks in, thresholds stop updating
+            entirely. Add a forced gradient update even when the rival's EMA is
+            not fresh enough.
+          </p>
+        </div>
+        <div class="problem-box">
+          <p>
+            Issue 3: <code>explore_left</code> only decrements when a non-greedy
+            choice is found. If the UCB score always agrees with greedy (e.g.
+            all kernels have been tried), exploration never fires. Add a random
+            probe every 10 iterations as a fallback.
+          </p>
+        </div>
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill new">improved DTA algorithm</span></div>
+        <div class="badge-row">
+          <span class="pill new">improved DTA algorithm</span>
+        </div>
         <h3>Revised algorithm: Sliding-window UCB + Forced Exploration</h3>
 
         <div class="algo-step">
           <div class="step-num num-coral">A</div>
           <div>
-            <p><strong>Replace total-count UCB with sliding-window UCB (SW-UCB):</strong></p>
-            <p>Standard UCB1 gives diminishing bonuses over time. SW-UCB uses a sliding window of the last W observations per kernel, so a kernel not tried in W iterations gets a fresh exploration bonus.</p>
-            <div class="formula">UCB(k, t) = EMA_k − c × √(ln(min(t, W)) / n_obs_in_window(k))</div>
-            <p>Set W = max(10, 2 × n_kernels). If a kernel has 0 observations in the window → return −∞ (force try).</p>
+            <p>
+              <strong
+                >Replace total-count UCB with sliding-window UCB
+                (SW-UCB):</strong
+              >
+            </p>
+            <p>
+              Standard UCB1 gives diminishing bonuses over time. SW-UCB uses a
+              sliding window of the last W observations per kernel, so a kernel
+              not tried in W iterations gets a fresh exploration bonus.
+            </p>
+            <div class="formula">
+              UCB(k, t) = EMA_k − c × √(ln(min(t, W)) / n_obs_in_window(k))
+            </div>
+            <p>
+              Set W = max(10, 2 × n_kernels). If a kernel has 0 observations in
+              the window → return −∞ (force try).
+            </p>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-coral">B</div>
           <div>
-            <p><strong>Counterfactual gradient — update thresholds even without fresh rival data:</strong></p>
-            <p>When you choose PM-BHash but PB-MSPA has no observations yet, your current code skips the m_density threshold update. Instead, use a prior: assume the rival's time equals the global median EMA as a conservative estimate.</p>
-            <pre>double rival_ema = best_rival_ema(rivals);
+            <p>
+              <strong
+                >Counterfactual gradient — update thresholds even without fresh
+                rival data:</strong
+              >
+            </p>
+            <p>
+              When you choose PM-BHash but PB-MSPA has no observations yet, your
+              current code skips the m_density threshold update. Instead, use a
+              prior: assume the rival's time equals the global median EMA as a
+              conservative estimate.
+            </p>
+            <pre>
+double rival_ema = best_rival_ema(rivals);
 if (rival_ema &lt; 0) {
     // No observations — use global median as conservative prior
     rival_ema = global_median_ema();
 }
-t_m.update((rival_ema / max(time_ms, 1e-9) - 1.0) * feat[12]);</pre>
+t_m.update((rival_ema / max(time_ms, 1e-9) - 1.0) * feat[12]);</pre
+            >
           </div>
         </div>
 
@@ -297,23 +717,40 @@ t_m.update((rival_ema / max(time_ms, 1e-9) - 1.0) * feat[12]);</pre>
           <div class="step-num num-coral">C</div>
           <div>
             <p><strong>Periodic forced probe (ε-greedy fallback):</strong></p>
-            <p>Every 10 iterations, force-try the kernel with the oldest last-use timestamp. This prevents the system from converging prematurely on a suboptimal kernel when hardware state changes.</p>
-            <pre>if (iteration % 10 == 0) {
+            <p>
+              Every 10 iterations, force-try the kernel with the oldest last-use
+              timestamp. This prevents the system from converging prematurely on
+              a suboptimal kernel when hardware state changes.
+            </p>
+            <pre>
+if (iteration % 10 == 0) {
     std::string oldest = min_element(stats,
         [](auto& a, auto& b){
             return a.second.last_used_iter &lt; b.second.last_used_iter;
         })->first;
     return oldest;  // forced probe, overrides greedy
-}</pre>
+}</pre
+            >
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-purple">D</div>
           <div>
-            <p><strong>Momentum decay — reduce oscillation near the optimum:</strong></p>
-            <p>Your threshold momentum is fixed at 0.9. Near the optimum, this causes sustained oscillation. Use a dampened momentum that reduces as the gradient magnitude shrinks.</p>
-            <div class="formula">β(t) = 0.9 × exp(−|gradient| × 0.1) &nbsp;&nbsp; (range: [0.3, 0.9])</div>
+            <p>
+              <strong
+                >Momentum decay — reduce oscillation near the optimum:</strong
+              >
+            </p>
+            <p>
+              Your threshold momentum is fixed at 0.9. Near the optimum, this
+              causes sustained oscillation. Use a dampened momentum that reduces
+              as the gradient magnitude shrinks.
+            </p>
+            <div class="formula">
+              β(t) = 0.9 × exp(−|gradient| × 0.1) &nbsp;&nbsp; (range: [0.3,
+              0.9])
+            </div>
           </div>
         </div>
 
@@ -321,88 +758,171 @@ t_m.update((rival_ema / max(time_ms, 1e-9) - 1.0) * feat[12]);</pre>
           <div class="step-num num-purple">E</div>
           <div>
             <p><strong>Separate learning rates per threshold type:</strong></p>
-            <p>Currently all three thresholds use the same <code>lr * 0.99</code> decay. The x_density threshold should decay slowly (it governs a large fraction of decisions). The LB threshold should decay fast (very few BFS iterations hit the LB boundary). Differentiate:</p>
-            <div class="formula">t_x:  lr₀ = 0.05, decay = 0.995 &nbsp;(slow — high impact)<br>t_m:  lr₀ = 0.03, decay = 0.99  &nbsp;(medium)<br>t_lb: lr₀ = 0.01, decay = 0.98  &nbsp;(fast — rare event)</div>
+            <p>
+              Currently all three thresholds use the same
+              <code>lr * 0.99</code> decay. The x_density threshold should decay
+              slowly (it governs a large fraction of decisions). The LB
+              threshold should decay fast (very few BFS iterations hit the LB
+              boundary). Differentiate:
+            </p>
+            <div class="formula">
+              t_x: lr₀ = 0.05, decay = 0.995 &nbsp;(slow — high impact)<br />t_m:
+              lr₀ = 0.03, decay = 0.99 &nbsp;(medium)<br />t_lb: lr₀ = 0.01,
+              decay = 0.98 &nbsp;(fast — rare event)
+            </div>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-teal">F</div>
           <div>
-            <p><strong>New threshold: intra-iteration variance (F1 from features):</strong></p>
-            <p>Add a 4th adaptive threshold <code>t_var</code> on <code>degree_variance</code> (feature F1) to decide between LB and non-LB variants. This replaces the current <code>degree_x &gt; t_lb</code> rule which conflates two distinct signals: average load vs peak load.</p>
-            <div class="formula">if degree_variance &gt; t_var → prefer LB variant<br>if degree_x &gt; t_x     → prefer SpMV/SpMSpV boundary</div>
+            <p>
+              <strong
+                >New threshold: intra-iteration variance (F1 from
+                features):</strong
+              >
+            </p>
+            <p>
+              Add a 4th adaptive threshold <code>t_var</code> on
+              <code>degree_variance</code> (feature F1) to decide between LB and
+              non-LB variants. This replaces the current
+              <code>degree_x &gt; t_lb</code> rule which conflates two distinct
+              signals: average load vs peak load.
+            </p>
+            <div class="formula">
+              if degree_variance &gt; t_var → prefer LB variant<br />if degree_x
+              &gt; t_x → prefer SpMV/SpMSpV boundary
+            </div>
           </div>
         </div>
-
       </div>
-
     </div>
 
     <!-- ═══════════════════════════════════ MODEL ARCH ═══════════════════════ -->
     <div class="pane" id="pane-model">
-
       <div class="card">
-        <div class="badge-row"><span class="pill new">architecture improvement</span></div>
+        <div class="badge-row">
+          <span class="pill new">architecture improvement</span>
+        </div>
         <h3>Replace single tree with cost-sensitive ensemble (Model 2)</h3>
-        <p>Model 2 (CPU kernel selector) has 5 output classes and the performance difference between classes varies by 10-100×. A single tree misclassifies equally-weighted. Use a cost-sensitive random forest where misclassifying PM-BHash as LB-MSPA (10× slower at high sparsity) costs more than misclassifying LB-MSPA as PB-MSPA (1.2× slower).</p>
+        <p>
+          Model 2 (CPU kernel selector) has 5 output classes and the performance
+          difference between classes varies by 10-100×. A single tree
+          misclassifies equally-weighted. Use a cost-sensitive random forest
+          where misclassifying PM-BHash as LB-MSPA (10× slower at high sparsity)
+          costs more than misclassifying LB-MSPA as PB-MSPA (1.2× slower).
+        </p>
 
         <div class="algo-step">
           <div class="step-num num-purple">1</div>
           <div>
-            <p>Build a <strong>cost matrix</strong> from profiling data: <code>cost[i][j]</code> = average slowdown when true class is i but you predict j.</p>
-            <div class="formula">cost[PM-BHash → LB-MSPA] ≈ 8×<br>cost[LB-MSPA → PM-BHash] ≈ 1.3×<br>cost[PB-MSPA → PM-BHash] ≈ 2×</div>
+            <p>
+              Build a <strong>cost matrix</strong> from profiling data:
+              <code>cost[i][j]</code> = average slowdown when true class is i
+              but you predict j.
+            </p>
+            <div class="formula">
+              cost[PM-BHash → LB-MSPA] ≈ 8×<br />cost[LB-MSPA → PM-BHash] ≈
+              1.3×<br />cost[PB-MSPA → PM-BHash] ≈ 2×
+            </div>
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-purple">2</div>
           <div>
-            <p>Incorporate cost matrix into sample weights: <code>w_i = cost[true_class, second_best_class]</code> instead of Eq.6 alone. This makes the tree avoid costly misclassifications even when accuracy is similar.</p>
-            <pre>w_combined[i] = w_eq6[i] × cost_matrix[y_true[i], y_second_best[i]]</pre>
+            <p>
+              Incorporate cost matrix into sample weights:
+              <code>w_i = cost[true_class, second_best_class]</code> instead of
+              Eq.6 alone. This makes the tree avoid costly misclassifications
+              even when accuracy is similar.
+            </p>
+            <pre>
+w_combined[i] = w_eq6[i] × cost_matrix[y_true[i], y_second_best[i]]</pre
+            >
           </div>
         </div>
 
         <div class="algo-step">
           <div class="step-num num-teal">3</div>
           <div>
-            <p>Use a <strong>3-tree ensemble</strong> for Model 2 only (the highest-variance model): train one tree on scale-free graphs, one on mesh, one on unknown. At inference, pick the tree based on Model 1's platform prediction.</p>
-            <p>This is faster than a full random forest and interpretable — you can still export the 3 trees to C++ without sklearn at runtime.</p>
+            <p>
+              Use a <strong>3-tree ensemble</strong> for Model 2 only (the
+              highest-variance model): train one tree on scale-free graphs, one
+              on mesh, one on unknown. At inference, pick the tree based on
+              Model 1's platform prediction.
+            </p>
+            <p>
+              This is faster than a full random forest and interpretable — you
+              can still export the 3 trees to C++ without sklearn at runtime.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill new">new: Model 0 — fast pre-filter</span></div>
+        <div class="badge-row">
+          <span class="pill new">new: Model 0 — fast pre-filter</span>
+        </div>
         <h3>Add a depth-0 decision before Model 1</h3>
-        <p>For the very first BFS iteration (depth=1, frontier size=1), no ML model is needed — the optimal kernel is always PM-BHash (single vertex). For the last iteration (frontier size=1), also PM-BHash. Short-circuit these cases before running any model.</p>
-        <pre>// In InferenceEngine::select_kernel():
+        <p>
+          For the very first BFS iteration (depth=1, frontier size=1), no ML
+          model is needed — the optimal kernel is always PM-BHash (single
+          vertex). For the last iteration (frontier size=1), also PM-BHash.
+          Short-circuit these cases before running any model.
+        </p>
+        <pre>
+// In InferenceEngine::select_kernel():
 if (x_nnz == 1) return {"CPU", "PM-BHash"};  // first/last iteration
 if (x_nnz > n * 0.3f) return {"GPU", "SpMV"}; // dense frontier
-// ...then proceed to Model 1</pre>
-        <p>This eliminates model inference overhead for a significant fraction of iterations (depth-1 and depth-final are universal) and is provably optimal.</p>
+// ...then proceed to Model 1</pre
+        >
+        <p>
+          This eliminates model inference overhead for a significant fraction of
+          iterations (depth-1 and depth-final are universal) and is provably
+          optimal.
+        </p>
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill new">new: confidence-gated DTA</span></div>
+        <div class="badge-row">
+          <span class="pill new">new: confidence-gated DTA</span>
+        </div>
         <h3>Only update DTA thresholds when the model is confident</h3>
-        <p>Your static model outputs a hard classification. Add softmax-style confidence estimation: if the two top candidate classes have close timing estimates (within 15%), do not update the threshold — the update signal is noisy. Only update when the winner is clearly faster.</p>
-        <div class="formula">if (rival_ema / time_ms - 1.0) &lt; 0.15 → skip gradient update<br>if (rival_ema / time_ms - 1.0) &gt; 1.5  → large update step (×2.0 lr)</div>
+        <p>
+          Your static model outputs a hard classification. Add softmax-style
+          confidence estimation: if the two top candidate classes have close
+          timing estimates (within 15%), do not update the threshold — the
+          update signal is noisy. Only update when the winner is clearly faster.
+        </p>
+        <div class="formula">
+          if (rival_ema / time_ms - 1.0) &lt; 0.15 → skip gradient update<br />if
+          (rival_ema / time_ms - 1.0) &gt; 1.5 → large update step (×2.0 lr)
+        </div>
       </div>
-
     </div>
 
     <!-- ═══════════════════════════════════ INFERENCE ═══════════════════════ -->
     <div class="pane" id="pane-inference">
-
       <div class="card">
         <div class="badge-row"><span class="pill fix">current issue</span></div>
         <h3>One-Copy Execution Flow: your implementation is incomplete</h3>
         <div class="problem-box">
-          <p>In your <code>InferenceEngine::select_kernel()</code>, the STATIC mode correctly implements Model 4's GPU→CPU dispatch. But in DTA_MODE, you bypass Models 1-4 entirely and only use the DTA. This means DTA never benefits from the one-copy transfer optimisation — it always stays on the same device it started on.</p>
+          <p>
+            In your <code>InferenceEngine::select_kernel()</code>, the STATIC
+            mode correctly implements Model 4's GPU→CPU dispatch. But in
+            DTA_MODE, you bypass Models 1-4 entirely and only use the DTA. This
+            means DTA never benefits from the one-copy transfer optimisation —
+            it always stays on the same device it started on.
+          </p>
         </div>
-        <p>Fix: run DTA for kernel selection within each device, but use the static Model 1 for initial platform selection, and check the Model 4 condition (x_decreasing) in DTA mode too.</p>
-        <pre>// Fixed DTA mode:
+        <p>
+          Fix: run DTA for kernel selection within each device, but use the
+          static Model 1 for initial platform selection, and check the Model 4
+          condition (x_decreasing) in DTA mode too.
+        </p>
+        <pre>
+// Fixed DTA mode:
 if (mode == DTA_MODE && dta) {
     if (iteration == 0) {
         // Use Model 1 for initial platform — DTA has no data yet
@@ -418,14 +938,22 @@ if (mode == DTA_MODE && dta) {
         }
     }
     return {k == "SpMV" ? "GPU" : "CPU", k};
-}</pre>
+}</pre
+        >
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill perf">performance improvement</span></div>
+        <div class="badge-row">
+          <span class="pill perf">performance improvement</span>
+        </div>
         <h3>Concurrent model predictions — reduce inference overhead</h3>
-        <p>The paper (Section IV-D) explicitly states: "Model 2, 3 and Model 4 make predictions concurrently". Your current code runs them sequentially. Parallelize with <code>std::async</code>:</p>
-        <pre>auto f2 = std::async(std::launch::async,
+        <p>
+          The paper (Section IV-D) explicitly states: "Model 2, 3 and Model 4
+          make predictions concurrently". Your current code runs them
+          sequentially. Parallelize with <code>std::async</code>:
+        </p>
+        <pre>
+auto f2 = std::async(std::launch::async,
     [&]{ return m2->predict_name(feat); });
 auto f4 = std::async(std::launch::async,
     [&]{ return m4->predict_name(feat); });
@@ -435,75 +963,224 @@ std::string plat = m1->predict_name(feat);
 
 // Now wait for results
 std::string cpu_k = f2.get();
-std::string uni_k = f4.get();</pre>
-        <p>On a 4-core CPU, this reduces inference from ~3× tree traversals sequential to ~1× parallel, saving 0.01-0.05ms per iteration — meaningful when PM-BHash itself takes 0.1ms.</p>
+std::string uni_k = f4.get();</pre
+        >
+        <p>
+          On a 4-core CPU, this reduces inference from ~3× tree traversals
+          sequential to ~1× parallel, saving 0.01-0.05ms per iteration —
+          meaningful when PM-BHash itself takes 0.1ms.
+        </p>
       </div>
 
       <div class="card">
-        <div class="badge-row"><span class="pill perf">performance improvement</span></div>
+        <div class="badge-row">
+          <span class="pill perf">performance improvement</span>
+        </div>
         <h3>Feature caching — avoid recomputing stable features</h3>
-        <p>Matrix features (f[0]-f[8]) and several hybrid features are constant within a BFS run. You already compute them once, but <code>build_feature_vector()</code> recomputes <code>log1p(n)</code>, <code>log1p(nnz)</code>, etc. on every call. Cache the first 9 values:</p>
-        <pre>// Compute once and store in InferenceEngine:
+        <p>
+          Matrix features (f[0]-f[8]) and several hybrid features are constant
+          within a BFS run. You already compute them once, but
+          <code>build_feature_vector()</code> recomputes <code>log1p(n)</code>,
+          <code>log1p(nnz)</code>, etc. on every call. Cache the first 9 values:
+        </p>
+        <pre>
+// Compute once and store in InferenceEngine:
 static_part[0..8] = build_static_features(ms);
 
 // Each iteration: copy and fill dynamic part only
 FeatureVector feat;
 std::copy(static_part, static_part+9, feat.v);
-build_dynamic_features(feat, x_nnz, m_nnz, x_nnz_prev);</pre>
-        <p>The new features F1-F3 (degree_var, growth_rate, peak_to_mean) are also static — compute once per graph.</p>
+build_dynamic_features(feat, x_nnz, m_nnz, x_nnz_prev);</pre
+        >
+        <p>
+          The new features F1-F3 (degree_var, growth_rate, peak_to_mean) are
+          also static — compute once per graph.
+        </p>
       </div>
-
     </div>
-
   </div>
 
   <div class="section">
     <div class="sec-title">impact summary</div>
     <div class="card">
-      <div style="display:grid;gap:.6rem">
+      <div style="display: grid; gap: 0.6rem">
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">Fix randomised training labels (train_models.py)</span><span style="font-size:12px;color:var(--color-text-secondary)">highest</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:95%;background:#534AB7"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px"
+              >Fix randomised training labels (train_models.py)</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >highest</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 95%; background: #534ab7"
+            ></div>
+          </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">Add frontier_growth_rate feature (F2)</span><span style="font-size:12px;color:var(--color-text-secondary)">very high</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:82%;background:#534AB7"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px"
+              >Add frontier_growth_rate feature (F2)</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >very high</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 82%; background: #534ab7"
+            ></div>
+          </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">SW-UCB with sliding window (DTA item A)</span><span style="font-size:12px;color:var(--color-text-secondary)">high</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:70%;background:#1D9E75"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px"
+              >SW-UCB with sliding window (DTA item A)</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >high</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 70%; background: #1d9e75"
+            ></div>
+          </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">Fix col_counts bug in features.cpp</span><span style="font-size:12px;color:var(--color-text-secondary)">high (correctness)</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:68%;background:#D85A30"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px"
+              >Fix col_counts bug in features.cpp</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >high (correctness)</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 68%; background: #d85a30"
+            ></div>
+          </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">Concurrent model predictions (inference)</span><span style="font-size:12px;color:var(--color-text-secondary)">medium</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:45%;background:#BA7517"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px"
+              >Concurrent model predictions (inference)</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >medium</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 45%; background: #ba7517"
+            ></div>
+          </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">Per-threshold learning rates (DTA item E)</span><span style="font-size:12px;color:var(--color-text-secondary)">medium</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:40%;background:#BA7517"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px"
+              >Per-threshold learning rates (DTA item E)</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >medium</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 40%; background: #ba7517"
+            ></div>
+          </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">spa_init_ratio feature (F5)</span><span style="font-size:12px;color:var(--color-text-secondary)">medium</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:38%;background:#BA7517"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px">spa_init_ratio feature (F5)</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >medium</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 38%; background: #ba7517"
+            ></div>
+          </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px">Model 0 pre-filter (first/last iteration)</span><span style="font-size:12px;color:var(--color-text-secondary)">low-medium</span></div>
-          <div class="impact-bar"><div class="impact-fill" style="width:28%;background:#5F5E5A"></div></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 3px;
+            "
+          >
+            <span style="font-size: 12px"
+              >Model 0 pre-filter (first/last iteration)</span
+            ><span style="font-size: 12px; color: var(--color-text-secondary)"
+              >low-medium</span
+            >
+          </div>
+          <div class="impact-bar">
+            <div
+              class="impact-fill"
+              style="width: 28%; background: #5f5e5a"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
-function show(id){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  document.getElementById('pane-'+id).classList.add('on');
-  event.target.classList.add('on');
-}
+  function show(id) {
+    document.querySelectorAll(".pane").forEach((p) => p.classList.remove("on"))
+    document.querySelectorAll(".tab").forEach((t) => t.classList.remove("on"))
+    document.getElementById("pane-" + id).classList.add("on")
+    event.target.classList.add("on")
+  }
 </script>

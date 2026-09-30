@@ -1,196 +1,522 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Basic CGA-BFS Simulation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root { --bg-color: #0d1117; --text-color: #ecf0f1; --cpu-color: #58a6ff; --gpu-color: #ff7b72; --kernel-bg: rgba(22, 27, 34, 0.85); --accent: #2ea043; --node-idle: #21262d; --border-color: #30363d; }
-        body { margin: 0; padding: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; background-image: radial-gradient(circle at 50% 0%, #1f2428 0%, #0d1117 70%); }
-        .sidebar { width: 400px; background-color: var(--kernel-bg); backdrop-filter: blur(10px); border-right: 1px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; z-index: 10; overflow-y: auto; }
-        .title { font-size: 26px; font-weight: 700; background: linear-gradient(90deg, #d2a8ff, #58a6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
-        .subtitle { font-size: 13px; color: #8b949e; margin-bottom: 30px; letter-spacing: 0.5px;text-transform: uppercase;}
-        
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .stat-box { background-color: #161b22; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; transition: all 0.3s ease; }
-        .stat-box.full-width { grid-column: span 2; }
-        .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #8b949e; margin-bottom: 5px; }
-        .stat-value { font-size: 24px; font-weight: 700; }
-        
-        .decision-box { background-color: rgba(88, 166, 255, 0.1); border-left: 4px solid var(--cpu-color); padding: 12px; font-size: 13px; margin-top: 10px; border-radius: 0 6px 6px 0; line-height: 1.4;}
-        .decision-box strong { color: var(--cpu-color); }
+      :root {
+        --bg-color: #0d1117;
+        --text-color: #ecf0f1;
+        --cpu-color: #58a6ff;
+        --gpu-color: #ff7b72;
+        --kernel-bg: rgba(22, 27, 34, 0.85);
+        --accent: #2ea043;
+        --node-idle: #21262d;
+        --border-color: #30363d;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Outfit", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        background-image: radial-gradient(
+          circle at 50% 0%,
+          #1f2428 0%,
+          #0d1117 70%
+        );
+      }
+      .sidebar {
+        width: 400px;
+        background-color: var(--kernel-bg);
+        backdrop-filter: blur(10px);
+        border-right: 1px solid var(--border-color);
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+        overflow-y: auto;
+      }
+      .title {
+        font-size: 26px;
+        font-weight: 700;
+        background: linear-gradient(90deg, #d2a8ff, #58a6ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+      }
+      .subtitle {
+        font-size: 13px;
+        color: #8b949e;
+        margin-bottom: 30px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
 
-        .kernel-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-top: 10px; }
-        .platform-cpu { border-left: 4px solid var(--cpu-color); box-shadow: 0 0 15px rgba(88, 166, 255, 0.1); }
-        .platform-gpu { border-left: 4px solid var(--gpu-color); box-shadow: 0 0 15px rgba(255, 123, 114, 0.1); }
-        .kernel-badge.cpu { background-color: rgba(88, 166, 255, 0.2); border: 1px solid var(--cpu-color); color: var(--cpu-color); }
-        .kernel-badge.gpu { background-color: rgba(255, 123, 114, 0.2); border: 1px solid var(--gpu-color); color: var(--gpu-color); }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      .stat-box {
+        background-color: #161b22;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        transition: all 0.3s ease;
+      }
+      .stat-box.full-width {
+        grid-column: span 2;
+      }
+      .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #8b949e;
+        margin-bottom: 5px;
+      }
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+      }
 
-        .controls { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .btn-row { display: flex; gap: 10px; }
-        button { flex: 1; padding: 12px; background-color: #30363d; color: white; border: 1px solid #484f58; border-radius: 6px; font-family: 'Outfit'; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        button:hover { background-color: #484f58; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+      .decision-box {
+        background-color: rgba(88, 166, 255, 0.1);
+        border-left: 4px solid var(--cpu-color);
+        padding: 12px;
+        font-size: 13px;
+        margin-top: 10px;
+        border-radius: 0 6px 6px 0;
+        line-height: 1.4;
+      }
+      .decision-box strong {
+        color: var(--cpu-color);
+      }
 
-        .canvas-container { flex: 1; position: relative; }
-        svg { width: 100%; height: 100%; }
-        .link { stroke: #30363d; stroke-opacity: 0.6; stroke-width: 1px; transition: stroke 0.3s; }
-        .node { fill: var(--node-idle); stroke: #0d1117; stroke-width: 1px; transition: all 0.4s ease; }
-        .node.visited { fill: #484f58; r: 3; }
-        .node.frontier-cpu { fill: var(--cpu-color); filter: drop-shadow(0 0 6px var(--cpu-color)); r: 7; }
-        .node.frontier-gpu { fill: var(--gpu-color); filter: drop-shadow(0 0 10px var(--gpu-color)); r: 10; }
+      .kernel-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 10px;
+      }
+      .platform-cpu {
+        border-left: 4px solid var(--cpu-color);
+        box-shadow: 0 0 15px rgba(88, 166, 255, 0.1);
+      }
+      .platform-gpu {
+        border-left: 4px solid var(--gpu-color);
+        box-shadow: 0 0 15px rgba(255, 123, 114, 0.1);
+      }
+      .kernel-badge.cpu {
+        background-color: rgba(88, 166, 255, 0.2);
+        border: 1px solid var(--cpu-color);
+        color: var(--cpu-color);
+      }
+      .kernel-badge.gpu {
+        background-color: rgba(255, 123, 114, 0.2);
+        border: 1px solid var(--gpu-color);
+        color: var(--gpu-color);
+      }
 
-        .log-panel { position: absolute; bottom: 20px; right: 20px; background: rgba(22, 27, 34, 0.8); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; width: 320px; max-height: 250px; overflow-y: auto; font-size: 12px; font-family: monospace; }
-        .log-entry { margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; }
-        
-        .time-box { background: rgba(210, 168, 255, 0.1); border: 1px solid #d2a8ff; border-radius: 6px; padding: 10px; margin-top: 10px; font-size: 14px; text-align: center; }
-        .time-box strong { font-size: 20px; color: #d2a8ff; }
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .btn-row {
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        flex: 1;
+        padding: 12px;
+        background-color: #30363d;
+        color: white;
+        border: 1px solid #484f58;
+        border-radius: 6px;
+        font-family: "Outfit";
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      button:hover {
+        background-color: #484f58;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .canvas-container {
+        flex: 1;
+        position: relative;
+      }
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+      .link {
+        stroke: #30363d;
+        stroke-opacity: 0.6;
+        stroke-width: 1px;
+        transition: stroke 0.3s;
+      }
+      .node {
+        fill: var(--node-idle);
+        stroke: #0d1117;
+        stroke-width: 1px;
+        transition: all 0.4s ease;
+      }
+      .node.visited {
+        fill: #484f58;
+        r: 3;
+      }
+      .node.frontier-cpu {
+        fill: var(--cpu-color);
+        filter: drop-shadow(0 0 6px var(--cpu-color));
+        r: 7;
+      }
+      .node.frontier-gpu {
+        fill: var(--gpu-color);
+        filter: drop-shadow(0 0 10px var(--gpu-color));
+        r: 10;
+      }
+
+      .log-panel {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(22, 27, 34, 0.8);
+        border: 1px solid var(--border-color);
+        padding: 15px;
+        border-radius: 8px;
+        width: 320px;
+        max-height: 250px;
+        overflow-y: auto;
+        font-size: 12px;
+        font-family: monospace;
+      }
+      .log-entry {
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 6px;
+      }
+
+      .time-box {
+        background: rgba(210, 168, 255, 0.1);
+        border: 1px solid #d2a8ff;
+        border-radius: 6px;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 14px;
+        text-align: center;
+      }
+      .time-box strong {
+        font-size: 20px;
+        color: #d2a8ff;
+      }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="sidebar">
-        <div class="title">Basic Original CGA</div>
-        <div class="subtitle">19-Feature Standard Framework</div>
+      <div class="title">Basic Original CGA</div>
+      <div class="subtitle">19-Feature Standard Framework</div>
 
-        <div class="stat-grid">
-            <div class="stat-box">
-                <div class="stat-label">Iteration (Depth)</div>
-                <div class="stat-value" id="lbl-iter">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Fr. Size</div>
-                <div class="stat-value" id="lbl-frontier">1</div>
-            </div>
-            
-            <div class="stat-box full-width platform-cpu" id="platform-box">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <div><div class="stat-label">Selected Environment</div><div class="stat-value" id="lbl-platform">CPU</div></div>
-                    <div class="kernel-badge cpu" id="lbl-kernel">PM-BHash</div>
-                </div>
-                <div class="decision-box"><strong>Basic Policy Logic:</strong> <span id="lbl-reason">Initialization. Starting on CPU.</span></div>
-            </div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-label">Iteration (Depth)</div>
+          <div class="stat-value" id="lbl-iter">0</div>
         </div>
-        
-        <div class="time-box">
-            Estimated Elapsed Time:<br>
-            <strong id="lbl-time">0.00 ms</strong>
+        <div class="stat-box">
+          <div class="stat-label">Fr. Size</div>
+          <div class="stat-value" id="lbl-frontier">1</div>
         </div>
 
-        <div class="controls">
-            <div class="btn-row">
-                <button id="btn-next" onclick="nextEpoch()">Step Iteration</button>
-                <button id="btn-run" onclick="autoRun()">Auto Run</button>
+        <div class="stat-box full-width platform-cpu" id="platform-box">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            "
+          >
+            <div>
+              <div class="stat-label">Selected Environment</div>
+              <div class="stat-value" id="lbl-platform">CPU</div>
             </div>
+            <div class="kernel-badge cpu" id="lbl-kernel">PM-BHash</div>
+          </div>
+          <div class="decision-box">
+            <strong>Basic Policy Logic:</strong>
+            <span id="lbl-reason">Initialization. Starting on CPU.</span>
+          </div>
         </div>
+      </div>
+
+      <div class="time-box">
+        Estimated Elapsed Time:<br />
+        <strong id="lbl-time">0.00 ms</strong>
+      </div>
+
+      <div class="controls">
+        <div class="btn-row">
+          <button id="btn-next" onclick="nextEpoch()">Step Iteration</button>
+          <button id="btn-run" onclick="autoRun()">Auto Run</button>
+        </div>
+      </div>
     </div>
 
     <div class="canvas-container">
-        <div class="log-panel" id="logger"><div style="color:#d2a8ff; font-weight:bold; margin-bottom:8px;">Basic Traversal Log</div></div>
-        <svg id="network-canvas"></svg>
+      <div class="log-panel" id="logger">
+        <div style="color: #d2a8ff; font-weight: bold; margin-bottom: 8px">
+          Basic Traversal Log
+        </div>
+      </div>
+      <svg id="network-canvas"></svg>
     </div>
 
     <script>
-        const nodes = Array.from({length: 345}, (_, i) => ({id: i, depth: -1}));
-        const links = [];
-        const levels = [[0], [1,2,3,4,5], Array.from({length: 15}, (_,i)=>i+6), Array.from({length: 30}, (_,i)=>i+21), Array.from({length: 50}, (_,i)=>i+51), Array.from({length: 80}, (_,i)=>i+101), Array.from({length: 100}, (_,i)=>i+181), Array.from({length: 40}, (_,i)=>i+281), Array.from({length: 15}, (_,i)=>i+321), Array.from({length: 5}, (_,i)=>i+336), Array.from({length: 4}, (_,i)=>i+341) ];
+      const nodes = Array.from({ length: 345 }, (_, i) => ({
+        id: i,
+        depth: -1,
+      }))
+      const links = []
+      const levels = [
+        [0],
+        [1, 2, 3, 4, 5],
+        Array.from({ length: 15 }, (_, i) => i + 6),
+        Array.from({ length: 30 }, (_, i) => i + 21),
+        Array.from({ length: 50 }, (_, i) => i + 51),
+        Array.from({ length: 80 }, (_, i) => i + 101),
+        Array.from({ length: 100 }, (_, i) => i + 181),
+        Array.from({ length: 40 }, (_, i) => i + 281),
+        Array.from({ length: 15 }, (_, i) => i + 321),
+        Array.from({ length: 5 }, (_, i) => i + 336),
+        Array.from({ length: 4 }, (_, i) => i + 341),
+      ]
 
-        for (let i = 0; i < levels.length - 1; i++) {
-            const parentLayer = levels[i]; const childLayer = levels[i+1];
-            childLayer.forEach(child => {
-                const randomParent = parentLayer[child % parentLayer.length]; // deterministic
-                links.push({source: randomParent, target: child});
-            });
+      for (let i = 0; i < levels.length - 1; i++) {
+        const parentLayer = levels[i]
+        const childLayer = levels[i + 1]
+        childLayer.forEach((child) => {
+          const randomParent = parentLayer[child % parentLayer.length] // deterministic
+          links.push({ source: randomParent, target: child })
+        })
+      }
+      for (let i = 2; i < levels.length; i++) {
+        const layer = levels[i]
+        for (let j = 0; j < layer.length / 3; j++) {
+          const u = layer[j]
+          const v = layer[(j + 2) % layer.length]
+          if (u !== v) links.push({ source: u, target: v })
         }
-        for (let i = 2; i < levels.length; i++) {
-            const layer = levels[i];
-            for (let j = 0; j < layer.length/3; j++) {
-                const u = layer[j]; const v = layer[(j+2)%layer.length];
-                if(u !== v) links.push({source: u, target: v});
-            }
+      }
+
+      const width = document.querySelector(".canvas-container").clientWidth
+      const height = document.querySelector(".canvas-container").clientHeight
+      const svg = d3.select("#network-canvas")
+
+      const simulation = d3
+        .forceSimulation(nodes)
+        .force(
+          "link",
+          d3
+            .forceLink(links)
+            .id((d) => d.id)
+            .distance(25),
+        )
+        .force("charge", d3.forceManyBody().strength(-15))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+      const linkLayer = svg.append("g")
+      const nodeLayer = svg.append("g")
+      const linkElements = linkLayer
+        .selectAll("line")
+        .data(links)
+        .enter()
+        .append("line")
+        .attr("class", "link")
+      const nodeElements = nodeLayer
+        .selectAll("circle")
+        .data(nodes)
+        .enter()
+        .append("circle")
+        .attr("class", "node")
+        .attr("r", 5)
+
+      simulation.on("tick", () => {
+        linkElements
+          .attr("x1", (d) => d.source.x)
+          .attr("y1", (d) => d.source.y)
+          .attr("x2", (d) => d.target.x)
+          .attr("y2", (d) => d.target.y)
+        nodeElements
+          .attr("cx", (d) => Math.max(10, Math.min(width - 10, d.x)))
+          .attr("cy", (d) => Math.max(10, Math.min(height - 10, d.y)))
+      })
+
+      let iter = 0
+      let frontier = [0]
+      let totalTime = 0.0
+      nodes[0].depth = 0
+
+      const basicPolicy = (nnz) => {
+        if (nnz === 0)
+          return {
+            platform: "N/A",
+            kernel: "HALT",
+            lat: 0,
+            reason: "Completed.",
+            col: "#8b949e",
+          }
+        if (nnz < 10)
+          return {
+            platform: "CPU",
+            kernel: "PM-BHash",
+            lat: 0.12,
+            reason: "Small frontier < 10 threshold. CPU execution.",
+            col: "var(--cpu-color)",
+          }
+        if (nnz < 50)
+          return {
+            platform: "CPU",
+            kernel: "MSPA",
+            lat: 0.45,
+            reason: "Medium frontier < 50 threshold. CPU MSPA format.",
+            col: "var(--cpu-color)",
+          }
+
+        // Basic CGA lacks One-Copy transfer back. Once it crosses threshold, it stays.
+        return {
+          platform: "GPU",
+          kernel: "SpMV",
+          lat:
+            nnz * 0.008 +
+            1.2 /* High penalty for small iterations due to overhead */,
+          reason:
+            "Frontier > 50 threshold. Shifted to GPU. Remaining on GPU indefinitely.",
+          col: "var(--gpu-color)",
+        }
+      }
+
+      function addLog(msg, color) {
+        const logger = document.getElementById("logger")
+        const d = document.createElement("div")
+        d.className = "log-entry"
+        d.innerHTML = `<span style="color:${color}">${msg}</span>`
+        logger.appendChild(d)
+        logger.scrollTop = logger.scrollHeight
+      }
+
+      function updateUI(frontierSize, policy) {
+        document.getElementById("lbl-iter").innerText = iter
+        document.getElementById("lbl-frontier").innerText = frontierSize
+
+        const pbox = document.getElementById("platform-box")
+        const kbadge = document.getElementById("lbl-kernel")
+        if (policy.platform === "CPU") {
+          pbox.className = "stat-box full-width platform-cpu"
+          kbadge.className = "kernel-badge cpu"
+        } else if (policy.platform === "GPU") {
+          pbox.className = "stat-box full-width platform-gpu"
+          kbadge.className = "kernel-badge gpu"
+        } else {
+          pbox.className = "stat-box full-width"
+          kbadge.style.display = "none"
         }
 
-        const width = document.querySelector('.canvas-container').clientWidth;
-        const height = document.querySelector('.canvas-container').clientHeight;
-        const svg = d3.select("#network-canvas");
-        
-        const simulation = d3.forceSimulation(nodes).force("link", d3.forceLink(links).id(d => d.id).distance(25)).force("charge", d3.forceManyBody().strength(-15)).force("center", d3.forceCenter(width / 2, height / 2));
-        const linkLayer = svg.append("g"); const nodeLayer = svg.append("g");
-        const linkElements = linkLayer.selectAll("line").data(links).enter().append("line").attr("class", "link");
-        const nodeElements = nodeLayer.selectAll("circle").data(nodes).enter().append("circle").attr("class", "node").attr("r", 5);
-
-        simulation.on("tick", () => {
-            linkElements.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-            nodeElements.attr("cx", d => Math.max(10, Math.min(width - 10, d.x))).attr("cy", d => Math.max(10, Math.min(height - 10, d.y)));
-        });
-
-        let iter = 0; let frontier = [0]; let totalTime = 0.0;
-        nodes[0].depth = 0;
-
-        const basicPolicy = (nnz) => {
-            if (nnz === 0) return { platform: 'N/A', kernel: 'HALT', lat: 0, reason: 'Completed.', col: '#8b949e' };
-            if (nnz < 10) return { platform: 'CPU', kernel: 'PM-BHash', lat: 0.12, reason: 'Small frontier < 10 threshold. CPU execution.', col: 'var(--cpu-color)' };
-            if (nnz < 50) return { platform: 'CPU', kernel: 'MSPA', lat: 0.45, reason: 'Medium frontier < 50 threshold. CPU MSPA format.', col: 'var(--cpu-color)' };
-            
-            // Basic CGA lacks One-Copy transfer back. Once it crosses threshold, it stays.
-            return { platform: 'GPU', kernel: 'SpMV', lat: (nnz * 0.008) + 1.2 /* High penalty for small iterations due to overhead */, reason: 'Frontier > 50 threshold. Shifted to GPU. Remaining on GPU indefinitely.', col: 'var(--gpu-color)' };
-        };
-
-        function addLog(msg, color) {
-            const logger = document.getElementById('logger');
-            const d = document.createElement('div'); d.className = 'log-entry'; d.innerHTML = `<span style="color:${color}">${msg}</span>`;
-            logger.appendChild(d); logger.scrollTop = logger.scrollHeight;
+        document.getElementById("lbl-platform").innerText = policy.platform
+        if (policy.kernel !== "HALT") {
+          kbadge.style.display = "inline-block"
+          kbadge.innerText = policy.kernel
         }
+        document.getElementById("lbl-reason").innerText = policy.reason
 
-        function updateUI(frontierSize, policy) {
-            document.getElementById('lbl-iter').innerText = iter;
-            document.getElementById('lbl-frontier').innerText = frontierSize;
-            
-            const pbox = document.getElementById('platform-box'); const kbadge = document.getElementById('lbl-kernel');
-            if (policy.platform === 'CPU') { pbox.className = "stat-box full-width platform-cpu"; kbadge.className = "kernel-badge cpu"; }
-            else if (policy.platform === 'GPU') { pbox.className = "stat-box full-width platform-gpu"; kbadge.className = "kernel-badge gpu"; }
-            else { pbox.className = "stat-box full-width"; kbadge.style.display = 'none'; }
+        totalTime += policy.lat
+        document.getElementById("lbl-time").innerText =
+          totalTime.toFixed(2) + " ms"
+        if (policy.kernel === "HALT")
+          document.getElementById("lbl-time").style.color = "#2ea043"
+      }
 
-            document.getElementById('lbl-platform').innerText = policy.platform;
-            if(policy.kernel !== 'HALT') { kbadge.style.display = 'inline-block'; kbadge.innerText = policy.kernel; }
-            document.getElementById('lbl-reason').innerText = policy.reason;
-            
-            totalTime += policy.lat;
-            document.getElementById('lbl-time').innerText = totalTime.toFixed(2) + " ms";
-            if(policy.kernel === 'HALT') document.getElementById('lbl-time').style.color = '#2ea043';
+      let isRunning = false
+      let intervalId = null
+
+      function nextEpoch() {
+        if (frontier.length === 0) return
+        iter++
+        const nextFrontier = []
+        nodeElements
+          .filter((d) => frontier.includes(d.id))
+          .attr("class", "node visited")
+          .style("filter", "none")
+          .attr("r", 3)
+
+        let newEdges = 0
+        links.forEach((l) => {
+          if (frontier.includes(l.source.id) && l.target.depth === -1) {
+            l.target.depth = iter
+            nextFrontier.push(l.target.id)
+            newEdges++
+          } else if (frontier.includes(l.target.id) && l.source.depth === -1) {
+            l.source.depth = iter
+            nextFrontier.push(l.source.id)
+            newEdges++
+          }
+        })
+
+        frontier = [...new Set(nextFrontier)]
+        const policy = basicPolicy(frontier.length)
+        const styleClass =
+          policy.platform === "CPU"
+            ? "frontier-cpu"
+            : policy.platform === "GPU"
+              ? "frontier-gpu"
+              : "visited"
+        if (frontier.length > 0)
+          nodeElements
+            .filter((d) => frontier.includes(d.id))
+            .attr("class", `node ${styleClass}`)
+
+        if (frontier.length > 0) {
+          addLog(
+            `[Iter ${iter}] Front=${frontier.length}. Placed on ${policy.platform} ${policy.kernel}. (+${policy.lat.toFixed(2)}ms)`,
+            policy.col,
+          )
+          updateUI(frontier.length, policy)
+        } else {
+          addLog(`[Iter ${iter}] Traversal Completed.`, "#8b949e")
+          updateUI(0, policy)
+          if (isRunning) clearInterval(intervalId)
+          document.getElementById("btn-run").disabled = true
+          document.getElementById("btn-next").disabled = true
         }
-
-        let isRunning = false; let intervalId = null;
-
-        function nextEpoch() {
-            if (frontier.length === 0) return;
-            iter++;
-            const nextFrontier = [];
-            nodeElements.filter(d => frontier.includes(d.id)).attr("class", "node visited").style("filter", "none").attr("r", 3);
-
-            let newEdges = 0;
-            links.forEach(l => {
-                if (frontier.includes(l.source.id) && l.target.depth === -1) { l.target.depth = iter; nextFrontier.push(l.target.id); newEdges++; }
-                else if (frontier.includes(l.target.id) && l.source.depth === -1) { l.source.depth = iter; nextFrontier.push(l.source.id); newEdges++; }
-            });
-
-            frontier = [...new Set(nextFrontier)];
-            const policy = basicPolicy(frontier.length);
-            const styleClass = policy.platform === 'CPU' ? 'frontier-cpu' : (policy.platform==='GPU' ? 'frontier-gpu' : 'visited');
-            if(frontier.length > 0) nodeElements.filter(d => frontier.includes(d.id)).attr("class", `node ${styleClass}`);
-            
-            if (frontier.length > 0) {
-                addLog(`[Iter ${iter}] Front=${frontier.length}. Placed on ${policy.platform} ${policy.kernel}. (+${policy.lat.toFixed(2)}ms)`, policy.col);
-                updateUI(frontier.length, policy);
-            } else {
-                addLog(`[Iter ${iter}] Traversal Completed.`, '#8b949e');
-                updateUI(0, policy);
-                if(isRunning) clearInterval(intervalId);
-                document.getElementById('btn-run').disabled = true; document.getElementById('btn-next').disabled = true;
-            }
-        }
-        function autoRun() { if (isRunning) return; isRunning = true; document.getElementById('btn-run').disabled = true; intervalId = setInterval(() => { if (frontier.length === 0) { clearInterval(intervalId); return; } nextEpoch(); }, 1500); }
-        nodeElements.filter(d => d.id === 0).attr("class", "node frontier-cpu");
+      }
+      function autoRun() {
+        if (isRunning) return
+        isRunning = true
+        document.getElementById("btn-run").disabled = true
+        intervalId = setInterval(() => {
+          if (frontier.length === 0) {
+            clearInterval(intervalId)
+            return
+          }
+          nextEpoch()
+        }, 1500)
+      }
+      nodeElements.filter((d) => d.id === 0).attr("class", "node frontier-cpu")
     </script>
-</body>
+  </body>
 </html>
